@@ -4,3 +4,5 @@ export 'package:flutter_toolkit/utils/nullable.dart';
 export 'package:flutter_toolkit/widgets/timer_builder.dart';
 export 'package:flutter_toolkit/core/throttling/throttling_builder.dart';
 export 'package:flutter_toolkit/core/throttling/throttling_controller.dart';
+export 'package:flutter_toolkit/widgets/theme/flutter_toolkit_theme.dart';
+export 'package:flutter_toolkit/widgets/custom_switch_button.dart';
