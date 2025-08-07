@@ -4,6 +4,7 @@ abstract class CustomValueNotifier<T> extends ChangeNotifier
     implements ValueListenable<T> {
   CustomValueNotifier() {
     _value = buildState();
+    _previousValue = value;
     initState();
   }
 
@@ -32,7 +33,7 @@ abstract class CustomValueNotifier<T> extends ChangeNotifier
 
   late T _value;
 
-  T? _previousValue;
+  late T _previousValue;
 
   bool _isDisposed = false;
 
@@ -43,7 +44,7 @@ abstract class CustomValueNotifier<T> extends ChangeNotifier
   @override
   T get value => _value;
 
-  void onStateChanged(T? previous, T current) {}
+  void onStateChanged(T previous, T current) {}
 
   @override
   void dispose() {
