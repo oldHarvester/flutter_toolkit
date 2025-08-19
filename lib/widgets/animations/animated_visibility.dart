@@ -60,9 +60,15 @@ class _AnimatedVisibilityState extends State<AnimatedVisibility>
   void didUpdateWidget(covariant AnimatedVisibility oldWidget) {
     if (oldWidget.show != widget.show) {
       if (widget.show) {
-        _animationController.animateTo(1);
+        _animationController.animateTo(
+          1,
+          duration: _animationController.duration,
+        );
       } else {
-        _animationController.animateTo(0);
+        _animationController.animateTo(
+          0,
+          duration: _animationController.reverseDuration,
+        );
       }
     }
     super.didUpdateWidget(oldWidget);
