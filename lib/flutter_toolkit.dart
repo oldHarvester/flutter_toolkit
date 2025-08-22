@@ -13,3 +13,4 @@ export 'package:flutter_toolkit/widgets/animations/list_insert_animation.dart';
 export 'package:flutter_toolkit/widgets/animations/list_remove_animation.dart';
 export 'package:flutter_toolkit/widgets/proxy_value_listenable_builder.dart';
 export 'package:flutter_toolkit/widgets/maybe_hero.dart';
+export 'package:flutter_toolkit/widgets/animations/slide_apear_animation.dart';
