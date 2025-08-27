@@ -12,4 +12,16 @@ extension ListExtension<T> on List<T> {
     }
     return result;
   }
+
+  int? indexWhereOrNull(bool Function(T) test, [int start = 0]) {
+    final index = indexWhere(
+      test,
+      start,
+    );
+    if (index < 0) {
+      return null;
+    } else {
+      return index;
+    }
+  }
 }
