@@ -18,3 +18,4 @@ export 'package:flutter_toolkit/widgets/separated_text_span.dart';
 export 'package:flutter_toolkit/extensions/object_extension.dart';
 export 'package:flutter_toolkit/extensions/iterable_extension.dart';
 export 'package:flutter_toolkit/extensions/list_extension.dart';
+export 'package:flutter_toolkit/widgets/ignorable_animated_switcher.dart';
