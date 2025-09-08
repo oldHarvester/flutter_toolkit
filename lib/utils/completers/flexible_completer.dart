@@ -7,13 +7,16 @@ class FlexibleCompleter<T> {
 
   bool _isCompleted = false;
 
-  bool _isCompeteWithError = false;
+  bool _isCompetedWithError = false;
 
   bool get isCancelled => _isCancelled;
 
   bool get isCompleted => _isCompleted;
 
-  bool get isCompeteWithError => _isCompeteWithError;
+  bool get isCompetedWithError => _isCompetedWithError;
+
+  bool get isSuccessfullyCompleted =>
+      !isCancelled && !isCompetedWithError && isCompleted;
 
   Object? _error;
 
@@ -23,11 +26,12 @@ class FlexibleCompleter<T> {
 
   StackTrace? get stackTrace => _stackTrace;
 
+  Future<T> get future => _compeleter.future;
+
   bool cancel() {
     if (isCompleted) {
       return false;
     }
-
     _compeleter.complete();
     _isCancelled = true;
     _isCompleted = true;
@@ -48,7 +52,8 @@ class FlexibleCompleter<T> {
       return false;
     }
     _compeleter.completeError(error, stackTrace);
-    _isCompeteWithError = true;
+    _isCompleted = true;
+    _isCompetedWithError = true;
     _error = error;
     _stackTrace = stackTrace;
     return true;
