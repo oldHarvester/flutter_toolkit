@@ -10,7 +10,13 @@ class ThrottleExecutor<T> {
     Duration duration = const Duration(milliseconds: 400),
     required VoidCallback onAction,
   }) {
-    _timer ??= Timer(duration, onAction);
+    _timer ??= Timer(
+      duration,
+      () {
+        _timer = null;
+        onAction();
+      },
+    );
   }
 
   void stop() {
