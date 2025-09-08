@@ -13,7 +13,7 @@ class ThrottleExecutor<T> {
     _timer ??= Timer(
       duration,
       () {
-        _timer = null;
+        stop();
         onAction();
       },
     );
