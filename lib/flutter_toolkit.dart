@@ -19,3 +19,7 @@ export 'package:flutter_toolkit/extensions/object_extension.dart';
 export 'package:flutter_toolkit/extensions/iterable_extension.dart';
 export 'package:flutter_toolkit/extensions/list_extension.dart';
 export 'package:flutter_toolkit/widgets/ignorable_animated_switcher.dart';
+export 'package:flutter_toolkit/utils/completers/flexible_completer.dart';
+export 'package:flutter_toolkit/utils/executors/safe_executor.dart';
+export 'package:flutter_toolkit/utils/executors/throttle_executor.dart';
+export 'package:flutter_toolkit/utils/size_extent_util.dart';
