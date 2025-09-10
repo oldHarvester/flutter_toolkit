@@ -24,3 +24,4 @@ export 'package:flutter_toolkit/utils/executors/safe_executor.dart';
 export 'package:flutter_toolkit/utils/executors/throttle_executor.dart';
 export 'package:flutter_toolkit/utils/size_extent_util.dart';
 export 'package:flutter_toolkit/utils/inherited_provider.dart';
+export 'package:flutter_toolkit/utils/custom_logger.dart';
