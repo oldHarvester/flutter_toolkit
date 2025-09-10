@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class InheritedHelper {
+class InheritedProvider {
   static T of<T extends InheritedWidget>(
     BuildContext context, {
     bool createDependency = true,
