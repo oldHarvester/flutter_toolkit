@@ -5,6 +5,8 @@ class ThrottleExecutor<T> {
   Timer? _timer;
   T? _arg;
 
+  bool get isActive => _timer != null && _timer!.isActive;
+
   void _start({
     T? arg,
     Duration duration = const Duration(milliseconds: 400),
