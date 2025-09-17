@@ -1,6 +1,10 @@
 import 'dart:async';
 
 class FlexibleCompleter<T> {
+  FlexibleCompleter({this.onCancel});
+
+  final void Function()? onCancel;
+
   final Completer<T> _compeleter = Completer<T>();
 
   bool _isCancelled = false;
@@ -32,6 +36,7 @@ class FlexibleCompleter<T> {
     if (isCompleted) {
       return false;
     }
+    onCancel?.call();
     _compeleter.complete();
     _isCancelled = true;
     _isCompleted = true;

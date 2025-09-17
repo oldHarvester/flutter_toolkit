@@ -2,36 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-class SafeExecutorLink {
-  const SafeExecutorLink._({required Completer<bool> completer})
-      : _completer = completer;
-
-  final Completer<bool> _completer;
-
-  void cancel() {
-    if (!_completer.isCompleted) {
-      _completer.complete(false);
-    }
-  }
-
-  void _completeSuccess() {
-    if (!_completer.isCompleted) {
-      _completer.complete(true);
-    }
-  }
-
-  void _completeError(Object error, StackTrace stackTrace) {
-    if (!_completer.isCompleted) {
-      _completer.completeError(error, stackTrace);
-    }
-  }
-
-  void _completeFailed() {
-    if (!_completer.isCompleted) {
-      _completer.complete(false);
-    }
-  }
-}
+import '../completers/flexible_completer.dart';
 
 enum SafeExecutorType {
   zeroDelayed,
@@ -40,29 +11,29 @@ enum SafeExecutorType {
 }
 
 class SafeExecutor {
-  Completer<bool>? _tempCompleter;
+  FlexibleCompleter<bool>? _tempCompleter;
+
+  void cancel() {
+    _tempCompleter?.cancel();
+  }
 
   Future<bool> perform(
     VoidCallback action, {
     SafeExecutorType type = SafeExecutorType.postFrameCallback,
-    void Function(SafeExecutorLink link)? linkHandler,
   }) {
-    final completer = Completer<bool>();
+    final completer = FlexibleCompleter<bool>();
     _tempCompleter = completer;
-    final link = SafeExecutorLink._(
-      completer: completer,
-    );
-    linkHandler?.call(link);
+
     void onAction() {
       try {
         if (completer == _tempCompleter && !completer.isCompleted) {
           action();
-          link._completeSuccess();
+          completer.complete(true);
         } else {
-          link._completeFailed();
+          completer.complete(false);
         }
       } catch (e, stk) {
-        link._completeError(e, stk);
+        completer.completeError(e, stk);
       }
     }
 
