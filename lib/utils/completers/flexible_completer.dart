@@ -63,4 +63,8 @@ class FlexibleCompleter<T> {
     _stackTrace = stackTrace;
     return true;
   }
+
+  bool canPerformAction(FlexibleCompleter? completer) {
+    return completer == this && !this.isCancelled && !this.isCompleted;
+  }
 }
