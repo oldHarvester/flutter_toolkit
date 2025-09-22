@@ -6,4 +6,8 @@ extension IterableExtension<T> on Iterable<T> {
       return null;
     }
   }
+
+  bool notContains(T item) {
+    return !contains(item);
+  }
 }
