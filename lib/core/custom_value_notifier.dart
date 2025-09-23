@@ -15,19 +15,24 @@ abstract class CustomValueNotifier<T> extends ChangeNotifier
   @mustCallSuper
   void initState() {}
 
+  /// Changes state with given previous state and returns `true` if it changed after manipulation
   @protected
-  void updateValue(T Function(T old) onChange, {bool force = false}) {
-    setValue(onChange(value), force: force);
+  bool updateValue(T Function(T old) onChange, {bool force = false}) {
+    return setValue(onChange(value), force: force);
   }
 
+  /// Changes state and returns `true` if it changed after manipulation
   @protected
-  void setValue(T newValue, {bool force = false}) {
-    if (_isDisposed) return;
+  bool setValue(T newValue, {bool force = false}) {
+    if (_isDisposed) return false;
     if (_value != newValue || force) {
       _previousValue = _value;
       _value = newValue;
       notifyListeners();
       onStateChanged(_previousValue, _value);
+      return true;
+    } else {
+      return false;
     }
   }
 
