@@ -14,7 +14,7 @@ class SafeExecutor {
   FlexibleCompleter<bool>? _tempCompleter;
 
   void cancel() {
-    _tempCompleter?.cancel();
+    _tempCompleter?.cancel(false);
   }
 
   Future<bool> perform(
@@ -32,8 +32,8 @@ class SafeExecutor {
         } else {
           completer.complete(false);
         }
-      } catch (e, stk) {
-        completer.completeError(e, stk);
+      } catch (e, _) {
+        completer.completeError(e);
       }
     }
 

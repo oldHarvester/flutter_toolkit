@@ -32,12 +32,12 @@ class FlexibleCompleter<T> {
 
   Future<T> get future => _compeleter.future;
 
-  bool cancel() {
+  bool cancel([FutureOr<T>? value]) {
     if (isCompleted) {
       return false;
     }
     onCancel?.call();
-    _compeleter.complete();
+    _compeleter.complete(value);
     _isCancelled = true;
     _isCompleted = true;
     return true;
