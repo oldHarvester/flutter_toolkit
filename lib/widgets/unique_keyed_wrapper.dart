@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
-class UniqueKeyedWrapper extends StatefulWidget {
+class UniqueKeyedWrapper<T> extends StatefulWidget {
   const UniqueKeyedWrapper({
     super.key,
+    this.value,
     required this.child,
   });
 
+  final T? value;
   final Widget child;
 
   @override
@@ -13,7 +15,15 @@ class UniqueKeyedWrapper extends StatefulWidget {
 }
 
 class _UniqueKeyedWrapperState extends State<UniqueKeyedWrapper> {
-  final UniqueKey _key = UniqueKey();
+  UniqueKey _key = UniqueKey();
+
+  @override
+  void didUpdateWidget(covariant UniqueKeyedWrapper oldWidget) {
+    if (oldWidget.value != widget.value) {
+      _key = UniqueKey();
+    }
+    super.didUpdateWidget(oldWidget);
+  }
 
   @override
   Widget build(BuildContext context) {
