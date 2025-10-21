@@ -11,6 +11,10 @@ enum SafeExecutorType {
 }
 
 class SafeExecutor {
+  static const defaultCancelPrevious = true;
+
+  static const defaultType = SafeExecutorType.postFrameCallback;
+
   FlexibleCompleter<bool>? _tempCompleter;
 
   void cancel() {
@@ -19,8 +23,12 @@ class SafeExecutor {
 
   Future<bool> perform(
     VoidCallback action, {
-    SafeExecutorType type = SafeExecutorType.postFrameCallback,
+    bool cancelPrevious = defaultCancelPrevious,
+    SafeExecutorType type = defaultType,
   }) {
+    if (cancelPrevious) {
+      cancel();
+    }
     final completer = FlexibleCompleter<bool>();
     _tempCompleter = completer;
 

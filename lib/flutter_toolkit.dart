@@ -30,3 +30,4 @@ export 'package:flutter_toolkit/utils/generators/int_generator.dart';
 export 'package:flutter_toolkit/utils/inherited/inherited_controller.dart';
 export 'package:flutter_toolkit/extensions/constraints_extension.dart';
 export 'package:flutter_toolkit/widgets/aspect_ratio_builder.dart';
+export 'package:flutter_toolkit/utils/executors/safe_executor_map.dart';
