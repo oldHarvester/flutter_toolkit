@@ -28,12 +28,12 @@ extension IterableExtension<T> on Iterable<T> {
   }
 
   int get lastIndex {
-    assert(isEmpty, 'List is empty');
+    assert(!isEmpty, 'List is empty');
     return length - 1;
   }
 
   int get firstIndex {
-    assert(isEmpty, 'List is empty');
+    assert(!isEmpty, 'List is empty');
     return 0;
   }
 
