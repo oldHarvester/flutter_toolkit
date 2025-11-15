@@ -11,66 +11,37 @@ extension IterableExtension<T> on Iterable<T> {
     return !contains(item);
   }
 
-  bool isIndexLast(int index) => index == length - 1;
-
-  Iterable<T> separate(
-    T item, {
-    bool around = false,
-    bool between = true,
-    bool onStart = false,
-    bool onEnd = false,
-  }) {
-    return smartInsert(
-      around: (items) {
-        return around ? item : null;
-      },
-      between: (items) {
-        return between ? item : null;
-      },
-      onEnd: (items) {
-        return onEnd ? item : null;
-      },
-      onStart: (items) {
-        return onStart ? item : null;
-      },
-    );
+  int? get lastIndexOrNull {
+    try {
+      return lastIndex;
+    } catch (e) {
+      return null;
+    }
   }
 
-  Iterable<T> smartInsert({
-    T? Function(Iterable<T> items)? around,
-    T? Function(Iterable<T> items)? between,
-    T? Function(Iterable<T> items)? onEnd,
-    T? Function(Iterable<T> items)? onStart,
-  }) {
-    final betweenItem = between?.call(this);
-    final aroundItem = around?.call(this);
-    final startItem = onStart?.call(this);
-    final endItem = onEnd?.call(this);
-    final items = <T>[];
-    if (betweenItem != null) {
-      for (final itemRecord in indexed) {
-        final index = itemRecord.$1;
-        final item = itemRecord.$2;
-        items.add(item);
-        final isLast = isIndexLast(index);
-        if (!isLast) {
-          items.add(betweenItem);
-        }
-      }
-    } else {
-      items.addAll(toList());
+  int? get firstIndexOrNull {
+    try {
+      return firstIndex;
+    } catch (e) {
+      return null;
     }
-    if (aroundItem != null) {
-      items.add(aroundItem);
-      items.insert(0, aroundItem);
-    } else {
-      if (startItem != null) {
-        items.insert(0, startItem);
-      }
-      if (endItem != null) {
-        items.add(endItem);
-      }
-    }
-    return items;
   }
+
+  int get lastIndex {
+    assert(isEmpty, 'List is empty');
+    return length - 1;
+  }
+
+  int get firstIndex {
+    assert(isEmpty, 'List is empty');
+    return 0;
+  }
+
+  bool isIndexLast(int index) => index == lastIndex;
+
+  bool isIndexFirst(int index) => index == firstIndex;
+
+  bool exceedMax(int index) => index > lastIndex;
+
+  bool exceedMin(int index) => index < firstIndex;
 }
