@@ -87,4 +87,20 @@ extension ListExtension<T> on List<T> {
     }
     return items;
   }
+
+  T? removeAtOrNull(int index) {
+    try {
+      return removeAt(index);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  T? removeLastOrNull() {
+    try {
+      return removeLast();
+    } catch (e) {
+      return null;
+    }
+  }
 }
