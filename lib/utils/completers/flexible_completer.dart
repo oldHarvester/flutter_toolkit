@@ -18,6 +18,7 @@ class FlexibleCompleter<T> {
   FlexibleCompleter({
     this.onCancel,
     this.timeoutDuration,
+    this.onTimeout,
   }) {
     if (timeoutDuration != null) {
       _timeoutExecutor.execute(
@@ -29,12 +30,15 @@ class FlexibleCompleter<T> {
               FlexibleCompleterExceptionType.timeout,
             ),
           );
+          onTimeout?.call();
         },
       );
     }
   }
 
   final void Function()? onCancel;
+
+  final void Function()? onTimeout;
 
   final Duration? timeoutDuration;
 
