@@ -1,17 +1,56 @@
 import 'dart:async';
 
+import 'package:flutter_toolkit/utils/executors/throttle_executor.dart';
+
+enum FlexibleCompleterExceptionType {
+  timeout,
+  ;
+
+  const FlexibleCompleterExceptionType();
+}
+
+class FlexibleCompleterException implements Exception {
+  const FlexibleCompleterException(this.type);
+  final FlexibleCompleterExceptionType type;
+}
+
 class FlexibleCompleter<T> {
-  FlexibleCompleter({this.onCancel});
+  FlexibleCompleter({
+    this.onCancel,
+    this.timeoutDuration,
+  }) {
+    if (timeoutDuration != null) {
+      _timeoutExecutor.execute(
+        duration: timeoutDuration!,
+        onAction: () {
+          _isTimeout = true;
+          completeError(
+            FlexibleCompleterException(
+              FlexibleCompleterExceptionType.timeout,
+            ),
+          );
+        },
+      );
+    }
+  }
 
   final void Function()? onCancel;
 
-  final Completer<T> _compeleter = Completer<T>();
+  final Duration? timeoutDuration;
+
+  final Completer<T> _completer = Completer<T>();
+
+  final ThrottleExecutor _timeoutExecutor = ThrottleExecutor();
 
   bool _isCancelled = false;
 
   bool _isCompleted = false;
 
   bool _isCompetedWithError = false;
+
+  bool _isTimeout = false;
+
+  bool get isTimeout => _isTimeout;
 
   bool get isCancelled => _isCancelled;
 
@@ -30,24 +69,30 @@ class FlexibleCompleter<T> {
 
   StackTrace? get stackTrace => _stackTrace;
 
-  Future<T> get future => _compeleter.future;
+  Future<T> get future => _completer.future;
 
   bool cancel([FutureOr<T>? value]) {
     if (isCompleted) {
       return false;
     }
+    cancelTimeout();
     onCancel?.call();
-    _compeleter.complete(value);
+    _completer.complete(value);
     _isCancelled = true;
     _isCompleted = true;
     return true;
+  }
+
+  bool cancelTimeout() {
+    return _timeoutExecutor.stop();
   }
 
   bool complete([FutureOr<T>? value]) {
     if (isCompleted) {
       return false;
     }
-    _compeleter.complete(value);
+    cancelTimeout();
+    _completer.complete(value);
     _isCompleted = true;
     return true;
   }
@@ -56,7 +101,8 @@ class FlexibleCompleter<T> {
     if (isCompleted) {
       return false;
     }
-    _compeleter.completeError(error, stackTrace);
+    cancelTimeout();
+    _completer.completeError(error, stackTrace);
     _isCompleted = true;
     _isCompetedWithError = true;
     _error = error;

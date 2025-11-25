@@ -29,9 +29,15 @@ class ThrottleExecutor<T> {
     }
   }
 
-  void stop() {
-    _timer?.cancel();
-    _timer = null;
+  bool stop() {
+    final timer = _timer;
+    if (timer != null && timer.isActive) {
+      timer.cancel();
+      _timer = null;
+      return true;
+    } else {
+      return false;
+    }
   }
 
   void execute({
