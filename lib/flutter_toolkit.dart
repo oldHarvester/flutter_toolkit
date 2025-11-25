@@ -32,3 +32,5 @@ export 'package:flutter_toolkit/extensions/constraints_extension.dart';
 export 'package:flutter_toolkit/widgets/aspect_ratio_builder.dart';
 export 'package:flutter_toolkit/utils/executors/safe_executor_map.dart';
 export 'package:flutter_toolkit/utils/completers/flexible_argument_completer.dart';
+export 'package:flutter_toolkit/core/models/operation_result.dart';
+export 'package:flutter_toolkit/extensions/future_extension.dart';
