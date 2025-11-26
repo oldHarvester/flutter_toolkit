@@ -9,8 +9,11 @@ class InfiniteTaskExecutor<T> {
 
   final Duration duration;
   final ThrottleExecutor _executor = ThrottleExecutor();
+
   FutureOr<T> Function()? _foo;
-  bool _paused = false;
+
+  bool _paused = true;
+
   bool _disposed = false;
 
   bool get paused => _paused;
@@ -40,6 +43,7 @@ class InfiniteTaskExecutor<T> {
 
   void execute(FutureOr<T> Function() foo) {
     _foo = foo;
+    _paused = false;
     _executor.execute(
       duration: duration,
       onAction: () async {
