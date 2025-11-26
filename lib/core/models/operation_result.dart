@@ -9,6 +9,39 @@ extension OperationResultExtension<T> on OperationResult<T> {
       },
     );
   }
+
+  Object? get error {
+    return when(
+      onSuccess: (result) {
+        return null;
+      },
+      onError: (error, stackTrace) {
+        return error;
+      },
+    );
+  }
+
+  bool get isFailed {
+    return when(
+      onSuccess: (result) {
+        return false;
+      },
+      onError: (error, stackTrace) {
+        return true;
+      },
+    );
+  }
+
+  bool get isSuccess {
+    return when(
+      onSuccess: (result) {
+        return true;
+      },
+      onError: (error, stackTrace) {
+        return false;
+      },
+    );
+  }
 }
 
 sealed class OperationResult<T> {
