@@ -2,15 +2,18 @@ import 'dart:async';
 
 import 'package:flutter_toolkit/flutter_toolkit.dart';
 
+typedef Action<T> = FutureOr<T> Function();
+
 class InfiniteTaskExecutor<T> {
   InfiniteTaskExecutor({
     this.duration = const Duration(seconds: 1),
-  });
+    Action<T>? action,
+  }) : _action = action;
 
   final Duration duration;
   final ThrottleExecutor _executor = ThrottleExecutor();
 
-  FutureOr<T> Function()? _foo;
+  Action<T>? _action;
 
   bool _paused = true;
 
@@ -21,35 +24,50 @@ class InfiniteTaskExecutor<T> {
   bool get disposed => _disposed;
 
   void pause() {
+    if (_disposed) {
+      return;
+    }
     _paused = true;
     _executor.stop();
   }
 
-  void play() {
-    _paused = false;
-    final foo = _foo;
-    if (foo != null) {
-      execute(foo);
+  void setAction({Action<T>? action}) {
+    if (_disposed) {
+      return;
     }
+    _action = action;
   }
 
-  void toggle() {
+  void play({Action<T>? action}) {
+    if (_disposed) {
+      return;
+    }
+    setAction(action: action);
+    _paused = false;
+    _execute();
+  }
+
+  void toggle({Action<T>? action}) {
+    if (_disposed) {
+      return;
+    }
+    setAction(action: action);
     if (_paused) {
-      play();
+      play(action: action);
     } else {
       pause();
     }
   }
 
-  void execute(FutureOr<T> Function() foo) {
-    _foo = foo;
+  void _execute() {
+    final action = _action;
     _paused = false;
     _executor.execute(
       duration: duration,
       onAction: () async {
-        await foo();
+        await action?.call();
         if (!_paused || _disposed) {
-          execute(foo);
+          _execute();
         }
       },
     );
@@ -57,6 +75,7 @@ class InfiniteTaskExecutor<T> {
 
   void dispose() {
     _disposed = true;
+    _paused = true;
     _executor.stop();
   }
 }
