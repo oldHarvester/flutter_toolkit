@@ -1,4 +1,4 @@
-import 'package:example/example_page.dart';
+import 'package:example/flexible_completer_example.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -10,6 +10,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: ExamplePage());
+    return MaterialApp(home: FlexibleCompleterExample());
   }
 }

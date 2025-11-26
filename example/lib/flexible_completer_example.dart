@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_toolkit/flutter_toolkit.dart';
 
-class ExamplePage extends StatefulWidget {
-  const ExamplePage({super.key});
+class FlexibleCompleterExample extends StatefulWidget {
+  const FlexibleCompleterExample({super.key});
 
   @override
-  State<ExamplePage> createState() => _ExamplePageState();
+  State<FlexibleCompleterExample> createState() => _FlexibleCompleterExampleState();
 }
 
-class _ExamplePageState extends State<ExamplePage> {
+class _FlexibleCompleterExampleState extends State<FlexibleCompleterExample> {
   Future<bool> foo() {
     final completer = FlexibleCompleter<bool>(
       onCancel: () {
