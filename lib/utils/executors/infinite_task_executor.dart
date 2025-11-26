@@ -13,6 +13,10 @@ class InfiniteTaskExecutor<T> {
   bool _paused = false;
   bool _disposed = false;
 
+  bool get paused => _paused;
+
+  bool get disposed => _disposed;
+
   void pause() {
     _paused = true;
     _executor.stop();
