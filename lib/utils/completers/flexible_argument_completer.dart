@@ -6,6 +6,7 @@ class FlexibleArgumentCompleter<T, Y> extends FlexibleCompleter<T> {
     super.onCancel,
     super.onTimeout,
     super.timeoutDuration,
+    super.onReceived,
   });
   final Y arg;
 }

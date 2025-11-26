@@ -4,6 +4,7 @@ import 'package:flutter_toolkit/utils/executors/throttle_executor.dart';
 
 enum FlexibleCompleterExceptionType {
   timeout,
+  cancelled,
   ;
 
   const FlexibleCompleterExceptionType();
@@ -12,6 +13,11 @@ enum FlexibleCompleterExceptionType {
 class FlexibleCompleterException implements Exception {
   const FlexibleCompleterException(this.type);
   final FlexibleCompleterExceptionType type;
+
+  @override
+  String toString() {
+    return '$runtimeType - $type';
+  }
 }
 
 class FlexibleCompleter<T> {
@@ -19,6 +25,7 @@ class FlexibleCompleter<T> {
     this.onCancel,
     this.timeoutDuration,
     this.onTimeout,
+    this.onReceived,
   }) {
     if (timeoutDuration != null) {
       _timeoutExecutor.execute(
@@ -39,6 +46,8 @@ class FlexibleCompleter<T> {
   final void Function()? onCancel;
 
   final void Function()? onTimeout;
+
+  final void Function(T value, bool cancelledResult)? onReceived;
 
   final Duration? timeoutDuration;
 
@@ -81,7 +90,15 @@ class FlexibleCompleter<T> {
     }
     cancelTimeout();
     onCancel?.call();
-    _completer.complete(value);
+    if (value != null) {
+      complete(value, true);
+    } else {
+      completeError(
+        FlexibleCompleterException(
+          FlexibleCompleterExceptionType.cancelled,
+        ),
+      );
+    }
     _isCancelled = true;
     _isCompleted = true;
     return true;
@@ -91,13 +108,16 @@ class FlexibleCompleter<T> {
     return _timeoutExecutor.stop();
   }
 
-  bool complete([FutureOr<T>? value]) {
+  bool complete([FutureOr<T>? value, bool cancelledResult = false]) {
     if (isCompleted) {
       return false;
     }
     cancelTimeout();
     _completer.complete(value);
     _isCompleted = true;
+    if (value is T) {
+      onReceived?.call(value!, cancelledResult);
+    }
     return true;
   }
 
