@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter_toolkit/flutter_toolkit.dart';
 
 extension FutureOrExtension<T> on FutureOr<T> {
-  WhenValue when<WhenValue>({
+  WhenValue asyncOrSync<WhenValue>({
     required WhenValue Function(T value) synchronous,
     required WhenValue Function(Future<T> value) asynchronous,
   }) {
@@ -16,7 +16,7 @@ extension FutureOrExtension<T> on FutureOr<T> {
   }
 
   Future<T>? get asyncValue {
-    return when(
+    return asyncOrSync(
       synchronous: (value) {
         return null;
       },
@@ -27,7 +27,7 @@ extension FutureOrExtension<T> on FutureOr<T> {
   }
 
   T? get syncValue {
-    return when(
+    return asyncOrSync(
       synchronous: (value) {
         return value;
       },
@@ -38,7 +38,7 @@ extension FutureOrExtension<T> on FutureOr<T> {
   }
 
   FutureOr<OperationResult<T>> safeExecute() {
-    return when(
+    return asyncOrSync(
       synchronous: (value) {
         return value.safeExecute();
       },
