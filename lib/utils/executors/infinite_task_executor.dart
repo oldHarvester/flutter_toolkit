@@ -31,7 +31,7 @@ class InfiniteTaskExecutor<T> {
     _executor.stop();
   }
 
-  void setAction({Action<T>? action}) {
+  void setAction({required Action<T> action}) {
     if (_disposed) {
       return;
     }
@@ -42,7 +42,9 @@ class InfiniteTaskExecutor<T> {
     if (_disposed) {
       return;
     }
-    setAction(action: action);
+    if (action != null) {
+      setAction(action: action);
+    }
     _paused = false;
     _execute();
   }
@@ -51,7 +53,9 @@ class InfiniteTaskExecutor<T> {
     if (_disposed) {
       return;
     }
-    setAction(action: action);
+    if (action != null) {
+      setAction(action: action);
+    }
     if (_paused) {
       play(action: action);
     } else {
