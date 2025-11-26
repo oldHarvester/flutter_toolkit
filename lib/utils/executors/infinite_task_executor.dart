@@ -11,6 +11,7 @@ class InfiniteTaskExecutor<T> {
   final ThrottleExecutor _executor = ThrottleExecutor();
   FutureOr<T> Function()? _foo;
   bool _paused = false;
+  bool _disposed = false;
 
   void pause() {
     _paused = true;
@@ -39,10 +40,15 @@ class InfiniteTaskExecutor<T> {
       duration: duration,
       onAction: () async {
         await foo();
-        if (!_paused) {
+        if (!_paused || _disposed) {
           execute(foo);
         }
       },
     );
+  }
+
+  void dispose() {
+    _disposed = true;
+    _executor.stop();
   }
 }
