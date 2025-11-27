@@ -5,13 +5,17 @@ class AnimatedColorBuilder extends StatefulWidget {
     super.key,
     required this.builder,
     required this.color,
-    this.duration = const Duration(milliseconds: 500),
+    this.duration = const Duration(milliseconds: 400),
+    this.reverseDuration = const Duration(milliseconds: 400),
     this.curve = Curves.linear,
+    this.reverseCurve = Curves.linear,
   });
 
   final Color color;
-  final Duration? duration;
+  final Duration duration;
+  final Duration reverseDuration;
   final Curve curve;
+  final Curve reverseCurve;
   final Widget Function(BuildContext context, Color color) builder;
 
   @override
@@ -44,6 +48,7 @@ class _AnimatedColorBuilderState extends State<AnimatedColorBuilder>
       CurvedAnimation(
         parent: _controller,
         curve: widget.curve,
+        reverseCurve: widget.reverseCurve,
       ),
     );
   }
@@ -53,6 +58,7 @@ class _AnimatedColorBuilderState extends State<AnimatedColorBuilder>
     _controller = AnimationController(
       vsync: this,
       duration: widget.duration,
+      reverseDuration: widget.reverseDuration,
     );
     _animation = _prepareAnimation(
       begin: widget.color,
