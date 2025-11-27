@@ -6,16 +6,16 @@ class AnimatedColorBuilder extends StatefulWidget {
     required this.builder,
     required this.color,
     this.duration = const Duration(milliseconds: 400),
-    this.reverseDuration = const Duration(milliseconds: 400),
+    this.reverseDuration,
     this.curve = Curves.linear,
-    this.reverseCurve = Curves.linear,
+    this.reverseCurve,
   });
 
   final Color color;
   final Duration duration;
-  final Duration reverseDuration;
+  final Duration? reverseDuration;
   final Curve curve;
-  final Curve reverseCurve;
+  final Curve? reverseCurve;
   final Widget Function(BuildContext context, Color color) builder;
 
   @override
