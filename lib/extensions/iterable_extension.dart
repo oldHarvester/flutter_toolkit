@@ -44,4 +44,9 @@ extension IterableExtension<T> on Iterable<T> {
   bool exceedMax(int index) => index > lastIndex;
 
   bool exceedMin(int index) => index < firstIndex;
+
+  Iterable<T> paginate(Iterable<T> list, int page, int limit) {
+    final startIndex = page * limit;
+    return list.skip(startIndex).take(limit);
+  }
 }
