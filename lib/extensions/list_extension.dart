@@ -33,8 +33,10 @@ extension ListExtension<T> on List<T> {
     bool between = true,
     bool onStart = false,
     bool onEnd = false,
+    bool Function(T item)? skipBetween,
   }) {
     return smartInsert(
+      skipBetween: skipBetween,
       around: (items) {
         return around ? item : null;
       },
@@ -55,6 +57,7 @@ extension ListExtension<T> on List<T> {
     T? Function(Iterable<T> items)? between,
     T? Function(Iterable<T> items)? onEnd,
     T? Function(Iterable<T> items)? onStart,
+    bool Function(T item)? skipBetween,
   }) {
     final betweenItem = between?.call(this);
     final aroundItem = around?.call(this);
@@ -66,8 +69,9 @@ extension ListExtension<T> on List<T> {
         final index = itemRecord.$1;
         final item = itemRecord.$2;
         items.add(item);
+        final skip = skipBetween?.call(item) ?? false;
         final isLast = isIndexLast(index);
-        if (!isLast) {
+        if (!isLast && !skip) {
           items.add(betweenItem);
         }
       }
@@ -103,6 +107,4 @@ extension ListExtension<T> on List<T> {
       return null;
     }
   }
-
-  
 }
