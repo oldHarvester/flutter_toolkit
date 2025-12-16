@@ -37,3 +37,4 @@ export 'package:flutter_toolkit/extensions/future_extension.dart';
 export 'package:flutter_toolkit/extensions/future_or_extension.dart';
 export 'package:flutter_toolkit/utils/executors/infinite_task_executor.dart';
 export 'package:flutter_toolkit/widgets/animations/animated_blur.dart';
+export 'package:flutter_toolkit/widgets/flexible_grid/flexible_grid.dart';

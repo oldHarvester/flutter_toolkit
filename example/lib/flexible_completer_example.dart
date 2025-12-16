@@ -5,21 +5,16 @@ class FlexibleCompleterExample extends StatefulWidget {
   const FlexibleCompleterExample({super.key});
 
   @override
-  State<FlexibleCompleterExample> createState() => _FlexibleCompleterExampleState();
+  State<FlexibleCompleterExample> createState() =>
+      _FlexibleCompleterExampleState();
 }
 
 class _FlexibleCompleterExampleState extends State<FlexibleCompleterExample> {
   Future<bool> foo() {
     final completer = FlexibleCompleter<bool>(
-      onCancel: () {
-        print('on cancel');
-      },
-      onTimeout: () {
-        print('on timeout');
-      },
-      onReceived: (value, cancelledResult) {
-        print('on received');
-      },
+      onCancel: () {},
+      onTimeout: () {},
+      onReceived: (value, cancelledResult) {},
       // timeoutDuration: Duration.zero,
     );
     Future.delayed(Duration(seconds: 5), () {
@@ -34,13 +29,7 @@ class _FlexibleCompleterExampleState extends State<FlexibleCompleterExample> {
   @override
   void initState() {
     super.initState();
-    foo()
-        .then((value) {
-          print('receive value: $value');
-        })
-        .catchError((error) {
-          print('catch error: $error');
-        });
+    foo().then((value) {}).catchError((error) {});
   }
 
   @override
