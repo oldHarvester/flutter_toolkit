@@ -28,43 +28,50 @@ class FlexibleGridIndex with EquatableMixin {
 }
 
 class FlexibleGridConstraints with EquatableMixin {
-  const FlexibleGridConstraints._({
+  const FlexibleGridConstraints({
     required this.boxConstraints,
     required this.cellSize,
     required this.cols,
     required this.rows,
     required this.totalCount,
     required this.skippedElements,
+    required this.colSpacing,
+    required this.rowSpacing,
+    required this.absoluteTotalCount,
   });
-
-  factory FlexibleGridConstraints.fromBoxConstraints({
-    required BoxConstraints constraints,
-    required int totalCount,
-    required int rows,
-    required int cols,
-    required double aspectRatio,
-    required SplayTreeSet<int> skippedElements,
-  }) {
-    final maxWidth = constraints.maxWidth;
-    final cellWidth = maxWidth / cols;
-    final cellHeight = cellWidth * aspectRatio;
-    final cellSize = Size(cellWidth, cellHeight);
-    return FlexibleGridConstraints._(
-      skippedElements: skippedElements,
-      boxConstraints: constraints,
-      cellSize: cellSize,
-      cols: cols,
-      rows: rows,
-      totalCount: totalCount,
-    );
-  }
 
   final SplayTreeSet<int> skippedElements;
   final BoxConstraints boxConstraints;
   final int totalCount;
+  final int absoluteTotalCount;
   final Size cellSize;
   final int rows;
   final int cols;
+  final double rowSpacing;
+  final double colSpacing;
+
+  double get totalWidth {
+    return cols * cellSize.width + (cols - 1) * rowSpacing;
+  }
+
+  ({int rowIndex, int colIndex}) rowColByIndex(int absoluteIndex) {
+    return (rowIndex: absoluteIndex ~/ cols, colIndex: absoluteIndex % cols);
+  }
+
+  Offset cellOffset(int absoluteIndex) {
+    final rowCol = rowColByIndex(absoluteIndex);
+    final row = rowCol.rowIndex;
+    final col = rowCol.colIndex;
+    final colIndex = col % cols;
+    final x = colIndex * (colSpacing + cellSize.width);
+    final y = row * (rowSpacing + cellSize.height);
+    return Offset(x, y);
+  }
+
+  Rect cellRect(int absoluteIndex) {
+    final offset = cellOffset(absoluteIndex);
+    return Rect.fromLTWH(offset.dx, offset.dy, cellSize.width, cellSize.height);
+  }
 
   @override
   List<Object?> get props => [
@@ -74,6 +81,8 @@ class FlexibleGridConstraints with EquatableMixin {
         cellSize,
         rows,
         cols,
+        rowSpacing,
+        colSpacing,
       ];
 }
 
@@ -85,6 +94,8 @@ class FlexibleGrid extends StatelessWidget {
     required this.cellBuilder,
     this.skippedCellBuilder,
     this.aspectRatio = 1,
+    this.colSpacing = 0,
+    this.rowSpacing = 0,
     Iterable<int> skipElements = const Iterable.empty(),
     this.wrapper,
   }) : skipElements = SplayTreeSet.from(skipElements);
@@ -92,6 +103,10 @@ class FlexibleGrid extends StatelessWidget {
   final int totalCount;
 
   final int cols;
+
+  final double colSpacing;
+
+  final double rowSpacing;
 
   final SplayTreeSet<int> skipElements;
 
@@ -113,7 +128,9 @@ class FlexibleGrid extends StatelessWidget {
 
   final double aspectRatio;
 
-  int get rows => (totalCount / cols).floor();
+  int get rows => (totalCount / cols).ceil();
+
+  int get absoluteTotalCount => rows * cols;
 
   Widget _buildGrid({
     required BuildContext context,
@@ -124,47 +141,54 @@ class FlexibleGrid extends StatelessWidget {
     final cellSize = gridConstraints.cellSize;
     final cellHeight = cellSize.height;
     return Column(
+      spacing: gridConstraints.rowSpacing,
       mainAxisSize: MainAxisSize.min,
       children: List.generate(
         rows,
         (rowIndex) {
           return SizedBox(
             height: cellHeight,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: List.generate(
-                cols,
-                (colIndex) {
-                  final absoluteIndex = rowIndex * cols + colIndex;
-                  final skip = skipElements.contains(absoluteIndex);
-                  if (skip) {
-                    relativeSkippedIndex++;
-                  } else {
-                    relativeIndex++;
-                  }
-                  return Expanded(
-                    child: skip
-                        ? skippedCellBuilder?.call(
+            child: SizedBox(
+              width: gridConstraints.totalWidth,
+              child: Row(
+                spacing: gridConstraints.colSpacing,
+                mainAxisSize: MainAxisSize.min,
+                children: List.generate(
+                  cols,
+                  (colIndex) {
+                    final absoluteIndex = rowIndex * cols + colIndex;
+                    final skip =
+                        absoluteIndex + 1 > gridConstraints.totalCount ||
+                            skipElements.contains(absoluteIndex);
+                    if (skip) {
+                      relativeSkippedIndex++;
+                    } else {
+                      relativeIndex++;
+                    }
+                    return Expanded(
+                      child: skip
+                          ? skippedCellBuilder?.call(
+                                context,
+                                FlexibleGridIndex(
+                                  relativeIndex: relativeSkippedIndex,
+                                  absoluteIndex: absoluteIndex,
+                                  colIndex: colIndex,
+                                  rowIndex: rowIndex,
+                                ),
+                              ) ??
+                              SizedBox.shrink()
+                          : cellBuilder(
                               context,
                               FlexibleGridIndex(
-                                relativeIndex: relativeSkippedIndex,
                                 absoluteIndex: absoluteIndex,
+                                relativeIndex: relativeIndex,
                                 colIndex: colIndex,
                                 rowIndex: rowIndex,
                               ),
-                            ) ??
-                            SizedBox.shrink()
-                        : cellBuilder(
-                            context,
-                            FlexibleGridIndex(
-                              absoluteIndex: absoluteIndex,
-                              relativeIndex: relativeIndex,
-                              colIndex: colIndex,
-                              rowIndex: rowIndex,
                             ),
-                          ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           );
@@ -177,13 +201,22 @@ class FlexibleGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final gridConstraints = FlexibleGridConstraints.fromBoxConstraints(
+        final colTotalSpacing = cols >= 2 ? cols * colSpacing : 0.0;
+        final maxWidth = constraints.maxWidth;
+        final availableWidth = maxWidth - colTotalSpacing;
+        final cellWidth = availableWidth / cols;
+        final cellHeight = cellWidth * aspectRatio;
+        final cellSize = Size(cellWidth, cellHeight);
+        final gridConstraints = FlexibleGridConstraints(
+          absoluteTotalCount: absoluteTotalCount,
+          colSpacing: colSpacing,
+          rowSpacing: rowSpacing,
           skippedElements: skipElements,
-          aspectRatio: aspectRatio,
           cols: cols,
           rows: rows,
-          constraints: constraints,
           totalCount: totalCount,
+          boxConstraints: constraints,
+          cellSize: cellSize,
         );
         return wrapper?.call(
               context,
