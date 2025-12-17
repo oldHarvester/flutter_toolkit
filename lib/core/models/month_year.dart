@@ -43,6 +43,14 @@ class MonthYear with EquatableMixin {
     return toDate(day: daysInMonth);
   }
 
+  bool isDateAfter(DateTime date) {
+    return date.isAfter(lastMonth.lastDay);
+  }
+
+  bool isDateBefore(DateTime date) {
+    return date.isBefore(nextMonth.firstDay);
+  }
+
   bool hasDate(DateTime date) {
     return date.month == month && date.year == year;
   }
