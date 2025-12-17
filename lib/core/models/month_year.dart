@@ -19,12 +19,32 @@ class MonthYear with EquatableMixin {
     return DateTime(year, month, day ?? 1);
   }
 
+  MonthYear get lastMonth {
+    return MonthYear.fromDate(
+      firstDay.subtract(
+        Duration(days: 1),
+      ),
+    );
+  }
+
+  MonthYear get nextMonth {
+    return MonthYear.fromDate(
+      lastDay.add(
+        Duration(days: 1),
+      ),
+    );
+  }
+
   DateTime get firstDay {
     return toDate(day: 1);
   }
 
   DateTime get lastDay {
     return toDate(day: daysInMonth);
+  }
+
+  bool hasDate(DateTime date) {
+    return date.month == month && date.year == year;
   }
 
   MonthYear copyWith({
