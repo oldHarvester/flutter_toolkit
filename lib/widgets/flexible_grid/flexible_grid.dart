@@ -68,6 +68,21 @@ class FlexibleGridConstraints with EquatableMixin {
     return Offset(x, y);
   }
 
+  Rect rowRect(int rowIndex) {
+    final firstAbsoluteIndexInRow = rowIndex * cols;
+    final firstRect = cellRect(firstAbsoluteIndexInRow);
+    if (cols == 1) {
+      return firstRect;
+    } else {
+      final lastAbsoluteIndexInRow = firstAbsoluteIndexInRow + cols - 1;
+      final lastRect = cellRect(lastAbsoluteIndexInRow);
+      return Rect.fromPoints(
+        firstRect.topLeft,
+        lastRect.bottomRight,
+      );
+    }
+  }
+
   Rect cellRect(int absoluteIndex) {
     final offset = cellOffset(absoluteIndex);
     return Rect.fromLTWH(offset.dx, offset.dy, cellSize.width, cellSize.height);
