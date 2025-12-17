@@ -59,11 +59,11 @@ class FlexibleGridConstraints with EquatableMixin {
   }
 
   int toAbsoluteIndex(int index) {
-    final last = skippedElements.lastOrNull;
-    if (last == null) {
+    final lastSkippedIndex = skippedElements.lastOrNull;
+    if (lastSkippedIndex == null) {
       return index;
     } else {
-      return index + last;
+      return index + lastSkippedIndex + 1;
     }
   }
 
