@@ -19,6 +19,14 @@ class MonthYear with EquatableMixin {
     return DateTime(year, month, day ?? 1);
   }
 
+  DateTime get firstDay {
+    return toDate(day: 1);
+  }
+
+  DateTime get lastDay {
+    return toDate(day: daysInMonth);
+  }
+
   MonthYear copyWith({
     int? month,
     int? year,
