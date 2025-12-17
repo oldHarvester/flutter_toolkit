@@ -39,3 +39,4 @@ export 'package:flutter_toolkit/utils/executors/infinite_task_executor.dart';
 export 'package:flutter_toolkit/widgets/animations/animated_blur.dart';
 export 'package:flutter_toolkit/widgets/flexible_grid/flexible_grid.dart';
 export 'package:flutter_toolkit/core/models/month_year.dart';
+export 'package:flutter_toolkit/core/models/date.dart';
