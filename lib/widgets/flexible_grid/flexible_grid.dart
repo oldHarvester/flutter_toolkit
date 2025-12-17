@@ -58,6 +58,15 @@ class FlexibleGridConstraints with EquatableMixin {
     return (rowIndex: absoluteIndex ~/ cols, colIndex: absoluteIndex % cols);
   }
 
+  int toAbsoluteIndex(int index) {
+    final last = skippedElements.lastOrNull;
+    if (last == null) {
+      return index;
+    } else {
+      return index + last;
+    }
+  }
+
   Offset cellOffset(int absoluteIndex) {
     final rowCol = rowColByIndex(absoluteIndex);
     final row = rowCol.rowIndex;
