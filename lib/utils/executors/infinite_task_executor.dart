@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_toolkit/flutter_toolkit.dart';
 
 typedef Action<T> = FutureOr<T> Function();
@@ -8,77 +9,88 @@ class InfiniteTaskExecutor<T> {
   InfiniteTaskExecutor({
     this.duration = const Duration(seconds: 1),
     Action<T>? action,
+    this.onResult,
   }) : _action = action;
 
   final Duration duration;
+  final ValueChanged<OperationResult<T>>? onResult;
   final ThrottleExecutor _executor = ThrottleExecutor();
 
   Action<T>? _action;
 
   bool _paused = true;
 
-  bool _disposed = false;
+  bool _disabled = false;
 
   bool get paused => _paused;
 
-  bool get disposed => _disposed;
+  bool get active => !paused;
 
-  void pause() {
-    if (_disposed) {
-      return;
+  bool get disabled => _disabled;
+
+  bool stop() {
+    if (disabled) {
+      return false;
     }
     _paused = true;
     _executor.stop();
+    return true;
   }
 
-  void setAction({required Action<T> action}) {
-    if (_disposed) {
-      return;
+  bool setAction({required Action<T> action}) {
+    if (disabled) {
+      return false;
     }
     _action = action;
+    return true;
   }
 
-  void play({Action<T>? action}) {
-    if (_disposed) {
-      return;
+  bool execute({Action<T>? action}) {
+    if (disabled) {
+      return false;
     }
     if (action != null) {
       setAction(action: action);
     }
-    _paused = false;
-    _execute();
+    return _execute();
   }
 
-  void toggle({Action<T>? action}) {
-    if (_disposed) {
-      return;
+  bool toggle({Action<T>? action}) {
+    if (disabled) {
+      return false;
     }
     if (action != null) {
       setAction(action: action);
     }
     if (_paused) {
-      play(action: action);
+      return execute(action: action);
     } else {
-      pause();
+      return stop();
     }
   }
 
-  void _execute() {
-    final action = _action;
+  bool _execute() {
+    if (_action == null) {
+      return false;
+    }
     _paused = false;
     _executor.execute(
       duration: duration,
       onAction: () async {
-        await action?.call();
-        if (!_paused || _disposed) {
+        final operationResult = await _action?.call().safeExecute();
+        if (!active && !disabled) {
+          if (operationResult != null) {
+            onResult?.call(operationResult);
+          }
           _execute();
         }
       },
     );
+    return true;
   }
 
-  void dispose() {
-    _disposed = true;
+  void disable() {
+    _disabled = true;
     _paused = true;
     _executor.stop();
   }
