@@ -51,7 +51,17 @@ class FlexibleGridConstraints with EquatableMixin {
   final double colSpacing;
 
   double get totalWidth {
+    if (cols == 0) {
+      return 0;
+    }
     return cols * cellSize.width + (cols - 1) * rowSpacing;
+  }
+
+  double get totalHeight {
+    if (cols == 0) {
+      return 0;
+    }
+    return rows * cellSize.height + (rows - 1) * colSpacing;
   }
 
   ({int rowIndex, int colIndex}) rowColByIndex(int absoluteIndex) {
