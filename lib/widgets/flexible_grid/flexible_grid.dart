@@ -58,7 +58,7 @@ class FlexibleGridConstraints with EquatableMixin {
   }
 
   double get totalHeight {
-    if (cols == 0) {
+    if (rows == 0) {
       return 0;
     }
     return rows * cellSize.height + (rows - 1) * colSpacing;
