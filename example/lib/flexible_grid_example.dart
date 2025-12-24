@@ -59,12 +59,12 @@ class _FlexibleGridExampleState extends State<FlexibleGridExample> {
                 ],
               );
             },
-            skippedCellBuilder: (context, gridIndex) {
+            skippedCellBuilder: (context, gridIndex, constraints) {
               return Container(
                 decoration: BoxDecoration(),
               );
             },
-            cellBuilder: (context, gridIndex) {
+            cellBuilder: (context, gridIndex, constraints) {
               return Container(
                 decoration: BoxDecoration(
                   border: border,

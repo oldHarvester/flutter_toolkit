@@ -147,11 +147,13 @@ class FlexibleGrid extends StatelessWidget {
   final Widget Function(
     BuildContext context,
     FlexibleGridIndex gridIndex,
+    FlexibleGridConstraints constraints,
   ) cellBuilder;
 
   final Widget Function(
     BuildContext context,
     FlexibleGridIndex gridIndex,
+    FlexibleGridConstraints constraints,
   )? skippedCellBuilder;
 
   final Widget Function(
@@ -209,6 +211,7 @@ class FlexibleGrid extends StatelessWidget {
                                   colIndex: colIndex,
                                   rowIndex: rowIndex,
                                 ),
+                                gridConstraints,
                               ) ??
                               SizedBox.shrink()
                           : cellBuilder(
@@ -219,6 +222,7 @@ class FlexibleGrid extends StatelessWidget {
                                 colIndex: colIndex,
                                 rowIndex: rowIndex,
                               ),
+                              gridConstraints,
                             ),
                     );
                   },
