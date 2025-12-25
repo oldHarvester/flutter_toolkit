@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 
+typedef CustomValueNotifierListener<T> = void Function(T previous, T current);
+
 abstract class CustomValueNotifier<T> extends ChangeNotifier
     implements ValueListenable<T> {
   CustomValueNotifier() {
@@ -8,12 +10,32 @@ abstract class CustomValueNotifier<T> extends ChangeNotifier
     initState();
   }
 
+  final List<CustomValueNotifierListener> _listeners = [];
+
+  void addImprovedListener(CustomValueNotifierListener listener) {
+    _listeners.add(listener);
+  }
+
+  void removeImprovedListener(CustomValueNotifierListener listener) {
+    _listeners.remove(listener);
+  }
+
   @protected
   T buildState();
 
   @protected
   @mustCallSuper
   void initState() {}
+
+  void _notifiyImprovedListeners(T previous, T current) {
+    try {
+      for (final listener in _listeners) {
+        listener(previous, current);
+      }
+    } catch (_) {
+      return;
+    }
+  }
 
   /// Changes state with given previous state and returns `true` if it changed after manipulation
   @protected
@@ -29,6 +51,7 @@ abstract class CustomValueNotifier<T> extends ChangeNotifier
       _previousValue = _value;
       _value = newValue;
       notifyListeners();
+      _notifiyImprovedListeners(_previousValue, _value);
       onStateChanged(_previousValue, _value);
       return true;
     } else {
@@ -42,7 +65,7 @@ abstract class CustomValueNotifier<T> extends ChangeNotifier
 
   bool _isDisposed = false;
 
-  T? get previousValue => _previousValue;
+  T get previousValue => _previousValue;
 
   bool get isDisposed => _isDisposed;
 
@@ -55,6 +78,7 @@ abstract class CustomValueNotifier<T> extends ChangeNotifier
   void dispose() {
     if (!_isDisposed) {
       _isDisposed = true;
+      _listeners.clear();
       super.dispose();
     }
   }
