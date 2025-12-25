@@ -27,7 +27,7 @@ abstract class CustomValueNotifier<T> extends ChangeNotifier
   @mustCallSuper
   void initState() {}
 
-  void _notifiyImprovedListeners(T previous, T current) {
+  void _notifyImprovedListeners(T previous, T current) {
     try {
       for (final listener in _listeners) {
         listener(previous, current);
@@ -51,7 +51,7 @@ abstract class CustomValueNotifier<T> extends ChangeNotifier
       _previousValue = _value;
       _value = newValue;
       notifyListeners();
-      _notifiyImprovedListeners(_previousValue, _value);
+      _notifyImprovedListeners(_previousValue, _value);
       onStateChanged(_previousValue, _value);
       return true;
     } else {

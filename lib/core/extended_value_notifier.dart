@@ -8,4 +8,8 @@ class ExtendedValueNotifier<T> extends CustomValueNotifier<T> {
   T buildState() {
     return _value;
   }
+
+  bool set(T newValue, {bool force = false}) {
+    return setValue(newValue, force: force);
+  }
 }
