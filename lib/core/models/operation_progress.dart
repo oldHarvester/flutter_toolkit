@@ -1,6 +1,7 @@
 extension OperationProgressExtension<T> on OperationProgress<T> {
   T? get result {
     return when(
+      idle: () => null,
       processing: () {
         return null;
       },
@@ -15,6 +16,7 @@ extension OperationProgressExtension<T> on OperationProgress<T> {
 
   Object? get error {
     return when(
+      idle: () => null,
       processing: () => null,
       onSuccess: (result) => null,
       onError: (error, stackTrace) => error,
@@ -23,6 +25,7 @@ extension OperationProgressExtension<T> on OperationProgress<T> {
 
   bool get isFailed {
     return when(
+      idle: () => false,
       processing: () => false,
       onSuccess: (result) => false,
       onError: (error, stackTrace) => false,
@@ -31,6 +34,7 @@ extension OperationProgressExtension<T> on OperationProgress<T> {
 
   bool get isSuccess {
     return when(
+      idle: () => false,
       processing: () => false,
       onError: (error, stackTrace) => false,
       onSuccess: (result) => true,
@@ -39,6 +43,7 @@ extension OperationProgressExtension<T> on OperationProgress<T> {
 
   bool get isProcessing {
     return when(
+      idle: () => false,
       onSuccess: (result) => false,
       onError: (error, stackTrace) => false,
       processing: () => true,
@@ -59,11 +64,13 @@ sealed class OperationProgress<T> {
   }) = OperationProgressFailed;
 
   WhenValue when<WhenValue>({
+    required WhenValue Function() idle,
     required WhenValue Function() processing,
     required WhenValue Function(T result) onSuccess,
     required WhenValue Function(Object error, StackTrace stackTrace) onError,
   }) {
     return switch (this) {
+      OperationIdle<T> _ => idle(),
       OperationProcessing<T> _ => processing(),
       OperationProgressSuccess<T> e => onSuccess(e.result),
       OperationProgressFailed<T> e => onError(e.error, e.stackTrace),
@@ -71,11 +78,13 @@ sealed class OperationProgress<T> {
   }
 
   MapValue? map<MapValue>(
+    MapValue? Function()? idle,
     MapValue? Function()? processing,
     MapValue? Function(T result)? onSuccess,
     MapValue? Function(Object error, StackTrace stackTrace)? onError,
   ) {
     return when(
+      idle: () => idle?.call(),
       processing: () => processing?.call(),
       onSuccess: (result) {
         return onSuccess?.call(result);
@@ -120,4 +129,8 @@ class OperationProgressFailed<T> extends OperationProgress<T> {
 
 class OperationProcessing<T> extends OperationProgress<T> {
   const OperationProcessing();
+}
+
+class OperationIdle<T> extends OperationProgress<T> {
+  const OperationIdle();
 }
