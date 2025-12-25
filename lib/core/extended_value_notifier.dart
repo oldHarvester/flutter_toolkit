@@ -9,7 +9,7 @@ class ExtendedValueNotifier<T> extends CustomValueNotifier<T> {
     return _value;
   }
 
-  bool set(T newValue, {bool force = false}) {
+  bool update(T newValue, {bool force = false}) {
     return setValue(newValue, force: force);
   }
 }
