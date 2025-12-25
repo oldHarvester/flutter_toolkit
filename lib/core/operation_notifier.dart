@@ -4,7 +4,7 @@ import 'package:flutter_toolkit/core/extended_value_notifier.dart';
 import 'package:flutter_toolkit/core/models/operation_progress.dart';
 
 class OperationNotifier<T> extends ExtendedValueNotifier<OperationProgress<T>> {
-  OperationNotifier() : super(OperationProgress.processing());
+  OperationNotifier() : super(OperationProgress.idle());
 
   FutureOr<T> execute({
     required FutureOr<T> Function() operation,
