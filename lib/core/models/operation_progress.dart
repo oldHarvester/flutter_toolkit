@@ -54,7 +54,9 @@ extension OperationProgressExtension<T> on OperationProgress<T> {
 sealed class OperationProgress<T> {
   const OperationProgress();
 
-  const factory OperationProgress.processing() = OperationProcessing;
+  const factory OperationProgress.idle() = OperationProgressIdle;
+
+  const factory OperationProgress.processing() = OperationProgressProcessing;
 
   const factory OperationProgress.success(T result) = OperationProgressSuccess;
 
@@ -70,8 +72,8 @@ sealed class OperationProgress<T> {
     required WhenValue Function(Object error, StackTrace stackTrace) onError,
   }) {
     return switch (this) {
-      OperationIdle<T> _ => idle(),
-      OperationProcessing<T> _ => processing(),
+      OperationProgressIdle<T> _ => idle(),
+      OperationProgressProcessing<T> _ => processing(),
       OperationProgressSuccess<T> e => onSuccess(e.result),
       OperationProgressFailed<T> e => onError(e.error, e.stackTrace),
     };
@@ -127,10 +129,10 @@ class OperationProgressFailed<T> extends OperationProgress<T> {
   }
 }
 
-class OperationProcessing<T> extends OperationProgress<T> {
-  const OperationProcessing();
+class OperationProgressProcessing<T> extends OperationProgress<T> {
+  const OperationProgressProcessing();
 }
 
-class OperationIdle<T> extends OperationProgress<T> {
-  const OperationIdle();
+class OperationProgressIdle<T> extends OperationProgress<T> {
+  const OperationProgressIdle();
 }
