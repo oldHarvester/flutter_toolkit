@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_toolkit/utils/executors/throttle_executor.dart';
 
 typedef CustomValueNotifierListener<T> = void Function(T previous, T current);
 
@@ -10,6 +11,7 @@ abstract class CustomValueNotifier<T> extends ChangeNotifier
     initState();
   }
 
+  final ThrottleExecutor<void> _throttler = ThrottleExecutor();
   final List<CustomValueNotifierListener<T>> _listeners = [];
 
   void addImprovedListener(CustomValueNotifierListener<T> listener) {
@@ -35,6 +37,27 @@ abstract class CustomValueNotifier<T> extends ChangeNotifier
     } catch (_) {
       return;
     }
+  }
+
+  @protected
+  void scheduleValue(T newValue, {bool force = false}) {
+    _throttler.execute(
+      onAction: () {
+        setValue(newValue, force: force);
+      },
+    );
+  }
+
+  @protected
+  void scheduleUpdateValue(T Function(T old) onChange, {bool force = false}) {
+    _throttler.execute(
+      onAction: () {
+        updateValue(
+          onChange,
+          force: force,
+        );
+      },
+    );
   }
 
   /// Changes state with given previous state and returns `true` if it changed after manipulation
@@ -79,6 +102,7 @@ abstract class CustomValueNotifier<T> extends ChangeNotifier
     if (!_isDisposed) {
       _isDisposed = true;
       _listeners.clear();
+      _throttler.stop();
       super.dispose();
     }
   }
