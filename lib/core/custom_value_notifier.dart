@@ -14,6 +14,8 @@ abstract class CustomValueNotifier<T> extends ChangeNotifier
   final ThrottleExecutor<void> _throttler = ThrottleExecutor();
   final List<CustomValueNotifierListener<T>> _listeners = [];
 
+  static const Duration throttleDuration = Duration(milliseconds: 300);
+
   void addImprovedListener(CustomValueNotifierListener<T> listener) {
     _listeners.add(listener);
   }
@@ -40,8 +42,13 @@ abstract class CustomValueNotifier<T> extends ChangeNotifier
   }
 
   @protected
-  void scheduleValue(T newValue, {bool force = false}) {
+  void scheduleValue(
+    T newValue, {
+    bool force = false,
+    Duration duration = throttleDuration,
+  }) {
     _throttler.execute(
+      duration: duration,
       onAction: () {
         setValue(newValue, force: force);
       },
@@ -49,8 +56,13 @@ abstract class CustomValueNotifier<T> extends ChangeNotifier
   }
 
   @protected
-  void scheduleUpdateValue(T Function(T old) onChange, {bool force = false}) {
+  void scheduleUpdateValue(
+    T Function(T old) onChange, {
+    bool force = false,
+    Duration duration = throttleDuration,
+  }) {
     _throttler.execute(
+      duration: duration,
       onAction: () {
         updateValue(
           onChange,
