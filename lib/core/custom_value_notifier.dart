@@ -10,7 +10,7 @@ abstract class CustomValueNotifier<T> extends ChangeNotifier
     initState();
   }
 
-  final List<CustomValueNotifierListener> _listeners = [];
+  final List<CustomValueNotifierListener<T>> _listeners = [];
 
   void addImprovedListener(CustomValueNotifierListener listener) {
     _listeners.add(listener);
