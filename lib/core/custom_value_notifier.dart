@@ -12,11 +12,11 @@ abstract class CustomValueNotifier<T> extends ChangeNotifier
 
   final List<CustomValueNotifierListener<T>> _listeners = [];
 
-  void addImprovedListener(CustomValueNotifierListener listener) {
+  void addImprovedListener(CustomValueNotifierListener<T> listener) {
     _listeners.add(listener);
   }
 
-  void removeImprovedListener(CustomValueNotifierListener listener) {
+  void removeImprovedListener(CustomValueNotifierListener<T> listener) {
     _listeners.remove(listener);
   }
 
