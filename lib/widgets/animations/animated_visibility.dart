@@ -12,12 +12,14 @@ class AnimatedVisibility extends StatefulWidget {
     this.animateSize = true,
     this.sizeAxis = Axis.vertical,
     this.sizeFixedCrossAxisSizeFactor,
+    this.disposeWhenHidden = false,
     required this.child,
   });
 
   final bool show;
   final Duration duration;
   final Curve curve;
+  final bool disposeWhenHidden;
   final bool animateSize;
   final double sizeAxisAlignment;
   final Axis sizeAxis;
@@ -106,12 +108,14 @@ class _AnimatedVisibilityState extends State<AnimatedVisibility>
       opacity: animation,
       child: IgnorePointer(
         ignoring: !widget.show,
-        child: ValueListenableBuilder(
-          valueListenable: _visible,
-          builder: (context, isVisible, child) {
-            return isVisible ? widget.child : const SizedBox();
-          },
-        ),
+        child: !widget.disposeWhenHidden
+            ? widget.child
+            : ValueListenableBuilder(
+                valueListenable: _visible,
+                builder: (context, isVisible, child) {
+                  return isVisible ? widget.child : const SizedBox();
+                },
+              ),
       ),
     );
     return widget.animateSize
