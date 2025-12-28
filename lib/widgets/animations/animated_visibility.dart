@@ -12,7 +12,7 @@ class AnimatedVisibility extends StatefulWidget {
     this.animateSize = true,
     this.sizeAxis = Axis.vertical,
     this.sizeFixedCrossAxisSizeFactor,
-    this.disposeWhenHidden = false,
+    this.disposeWhenHidden = true,
     required this.child,
   });
 
