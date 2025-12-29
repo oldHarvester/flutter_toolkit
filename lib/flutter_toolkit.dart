@@ -44,3 +44,4 @@ export 'package:flutter_toolkit/extensions/datetime_extension.dart';
 export 'package:flutter_toolkit/core/extended_value_notifier.dart';
 export 'package:flutter_toolkit/core/models/operation_progress.dart';
 export 'package:flutter_toolkit/core/operation_notifier.dart';
+export 'package:flutter_toolkit/extensions/string_extension.dart';
