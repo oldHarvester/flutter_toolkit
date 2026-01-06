@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_toolkit/flutter_toolkit.dart';
@@ -42,14 +41,17 @@ class SelectableState<Key, Value> with EquatableMixin {
     int? totalCount,
     Key Function(Value value)? keyReader,
   }) {
-    return SelectableState<Key, Value>(
-      includedKeys: includedKeys ?? this.includedKeys,
-      excludedKeys: excludedKeys ?? this.excludedKeys,
-      includedMap: includedMap ?? this.includedMap,
-      excludedMap: excludedMap ?? this.excludedMap,
-      overrideAll: overrideAll ?? this.overrideAll,
-      totalCount: totalCount ?? this.totalCount,
-      keyReader: keyReader ?? this.keyReader,
+    return changesWrapper(
+      previous: this,
+      next: SelectableState<Key, Value>(
+        includedKeys: includedKeys ?? this.includedKeys,
+        excludedKeys: excludedKeys ?? this.excludedKeys,
+        includedMap: includedMap ?? this.includedMap,
+        excludedMap: excludedMap ?? this.excludedMap,
+        overrideAll: overrideAll ?? this.overrideAll,
+        totalCount: totalCount ?? this.totalCount,
+        keyReader: keyReader ?? this.keyReader,
+      ),
     );
   }
 
@@ -124,10 +126,11 @@ class SelectableState<Key, Value> with EquatableMixin {
     );
   }
 
-  SelectableState<Key, Value> _changesWrapper(
-    SelectableState<Key, Value> state,
-  ) {
-    return state;
+  SelectableState<Key, Value> changesWrapper({
+    required SelectableState<Key, Value> previous,
+    required SelectableState<Key, Value> next,
+  }) {
+    return next;
   }
 
   SelectableState<Key, Value> toggleAll() {
@@ -163,13 +166,11 @@ class SelectableState<Key, Value> with EquatableMixin {
         includedMap[key] = value;
       }
     }
-    return _changesWrapper(
-      copyWith(
-        includedKeys: includedKeys,
-        includedMap: includedMap,
-        excludedKeys: excludedKeys,
-        excludedMap: excludedMap,
-      ),
+    return copyWith(
+      includedKeys: includedKeys,
+      includedMap: includedMap,
+      excludedKeys: excludedKeys,
+      excludedMap: excludedMap,
     );
   }
 
@@ -190,13 +191,11 @@ class SelectableState<Key, Value> with EquatableMixin {
         includedMap.remove(key);
       }
     }
-    return _changesWrapper(
-      copyWith(
-        excludedKeys: excludedKeys,
-        excludedMap: excludedMap,
-        includedKeys: includedKeys,
-        includedMap: includedMap,
-      ),
+    return copyWith(
+      excludedKeys: excludedKeys,
+      excludedMap: excludedMap,
+      includedKeys: includedKeys,
+      includedMap: includedMap,
     );
   }
 
@@ -214,6 +213,6 @@ class SelectableState<Key, Value> with EquatableMixin {
   }
 
   SelectableState<Key, Value> onTotalCountChanged(int totalCount) {
-    return _changesWrapper(copyWith(totalCount: totalCount));
+    return copyWith(totalCount: totalCount);
   }
 }
