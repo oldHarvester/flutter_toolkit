@@ -8,6 +8,10 @@ class NullableDateRange with EquatableMixin {
   })  : fromDate = fromDate?.withoutTime,
         toDate = toDate?.withoutTime;
 
+  NullableDateRange.zero()
+      : fromDate = null,
+        toDate = null;
+
   final DateTime? fromDate;
   final DateTime? toDate;
 
