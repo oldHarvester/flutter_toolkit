@@ -4,12 +4,12 @@ import 'package:flutter_toolkit/flutter_toolkit.dart';
 
 class SelectableState<Key, Value> with EquatableMixin {
   const SelectableState({
-    required this.includedKeys,
-    required this.excludedKeys,
-    required this.includedMap,
-    required this.excludedMap,
-    required this.overrideAll,
-    required this.totalCount,
+    this.includedKeys = const {},
+    this.excludedKeys = const {},
+    this.includedMap = const {},
+    this.excludedMap = const {},
+    this.overrideAll = false,
+    this.totalCount = 0,
     required this.keyReader,
   });
 
