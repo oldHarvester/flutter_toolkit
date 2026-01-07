@@ -20,12 +20,8 @@ sealed class FileFormat with EquatableMixin {
     return isRasterImage || isVectorImage;
   }
 
-  static FileFormat? tryFromBytes(Uint8List bytes) {
-    return FileFormat.fromBytes(bytes);
-  }
-
   factory FileFormat.fromBytes(Uint8List bytes) {
-    return bytes.fileFormat!;
+    return bytes.fileFormat;
   }
 
   factory FileFormat.fromFilename(String filename) {

@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter_toolkit/utils/file_format.dart';
 
 extension Uint8ListX on Uint8List {
-  FileFormat? get fileFormat {
+  FileFormat get fileFormat {
     try {
       if (_isPDF) return FileFormat.pdf;
       if (_isXLSX) return FileFormat.xlsx;
@@ -16,9 +16,9 @@ extension Uint8ListX on Uint8List {
       if (_isWebP) return FileFormat.webP;
       if (_isBMP) return FileFormat.bmp;
       if (_isGIF) return FileFormat.gif;
-      return null;
+      return FileFormat.unknown('');
     } catch (e) {
-      return null;
+      return FileFormat.unknown('');
     }
   }
 
