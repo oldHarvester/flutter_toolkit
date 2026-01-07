@@ -1,6 +1,6 @@
 export 'package:flutter_toolkit/core/custom_value_notifier.dart';
 export 'package:flutter_toolkit/core/proxy_notifier.dart';
-export 'package:flutter_toolkit/utils/nullable.dart';
+export 'package:flutter_toolkit/core/models/nullable.dart';
 export 'package:flutter_toolkit/widgets/timer_builder.dart';
 export 'package:flutter_toolkit/core/throttling/throttling_builder.dart';
 export 'package:flutter_toolkit/core/throttling/throttling_controller.dart';
@@ -50,4 +50,4 @@ export 'package:flutter_toolkit/utils/mixins/widget_states_mixin.dart';
 export 'package:flutter_toolkit/core/models/nullable_date_range.dart';
 export 'package:flutter_toolkit/extensions/widget_states_extension.dart';
 export 'package:flutter_toolkit/extensions/uint8list_extension.dart';
-export 'package:flutter_toolkit/utils/file_format.dart';
+export 'package:flutter_toolkit/core/models/file_format.dart';

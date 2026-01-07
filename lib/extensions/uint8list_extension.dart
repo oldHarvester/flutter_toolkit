@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:flutter_toolkit/utils/file_format.dart';
+import 'package:flutter_toolkit/core/models/file_format.dart';
 
 extension Uint8ListX on Uint8List {
   FileFormat get fileFormat {

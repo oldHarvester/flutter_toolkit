@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
-import '../../utils/nullable.dart';
+import '../models/nullable.dart';
 
 class ThrottleValue<T> extends Equatable {
   const ThrottleValue({

@@ -124,14 +124,6 @@ sealed class FileFormat with EquatableMixin {
   String get dotFormat {
     return '.$format';
   }
-
-  @override
-  bool operator ==(covariant FileFormat other) {
-    return other.format == format;
-  }
-
-  @override
-  int get hashCode => Object.hashAll([format]);
 }
 
 class _UnknownFileExtension extends FileFormat {
