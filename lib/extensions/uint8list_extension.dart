@@ -16,9 +16,9 @@ extension Uint8ListX on Uint8List {
       if (_isWebP) return FileFormat.webP;
       if (_isBMP) return FileFormat.bmp;
       if (_isGIF) return FileFormat.gif;
-      return FileFormat.unknown('');
+      return FileFormat.emptyUnknown();
     } catch (e) {
-      return FileFormat.unknown('');
+      return FileFormat.emptyUnknown();
     }
   }
 
