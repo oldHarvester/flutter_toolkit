@@ -12,4 +12,15 @@ extension StringExtension on String {
       return null;
     }
   }
+
+  bool get isWebUrl {
+    final str = this;
+    try {
+      final uri = Uri.parse(str);
+      return (uri.scheme == 'http' || uri.scheme == 'https') &&
+          uri.host.isNotEmpty;
+    } catch (e) {
+      return false;
+    }
+  }
 }
