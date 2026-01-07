@@ -21,7 +21,11 @@ sealed class FileFormat with EquatableMixin {
   }
 
   static FileFormat? tryFromBytes(Uint8List bytes) {
-    return bytes.fileFormat;
+    return FileFormat.fromBytes(bytes);
+  }
+
+  factory FileFormat.fromBytes(Uint8List bytes) {
+    return bytes.fileFormat!;
   }
 
   factory FileFormat.fromFilename(String filename) {
