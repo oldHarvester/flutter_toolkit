@@ -8,6 +8,18 @@ import 'package:flutter_toolkit/extensions/uint8list_extension.dart';
 sealed class FileFormat with EquatableMixin {
   const FileFormat(this.format);
 
+  bool get isRasterImage {
+    return rasterImages.contains(this);
+  }
+
+  bool get isVectorImage {
+    return vectorImages.contains(this);
+  }
+
+  bool get isImage {
+    return isRasterImage || isVectorImage;
+  }
+
   static FileFormat? tryFromBytes(Uint8List bytes) {
     return bytes.fileFormat;
   }
@@ -66,7 +78,7 @@ sealed class FileFormat with EquatableMixin {
 
   static const gif = _GIFFileExtension();
 
-  static const List<FileFormat> values = [
+  static final Set<FileFormat> values = {
     pdf,
     xlsx,
     xls,
@@ -79,16 +91,16 @@ sealed class FileFormat with EquatableMixin {
     webP,
     bmp,
     gif,
-  ];
+  };
 
-  static const List<FileFormat> images = [
+  static final Set<FileFormat> images = {
     ...rasterImages,
     ...vectorImages,
-  ];
+  };
 
-  static const List<FileFormat> rasterImages = [png, jpg, jpeg, webP, bmp];
+  static final Set<FileFormat> rasterImages = {png, jpg, jpeg, webP, bmp};
 
-  static const List<FileFormat> vectorImages = [svg];
+  static final Set<FileFormat> vectorImages = {svg};
 
   static FileFormat? tryFromFilename(String filename) {
     try {
