@@ -4,18 +4,22 @@ import 'package:flutter_toolkit/utils/file_format.dart';
 
 extension Uint8ListX on Uint8List {
   FileFormat? get fileFormat {
-    if (_isPDF) return FileFormat.pdf;
-    if (_isXLSX) return FileFormat.xlsx;
-    if (_isXLS) return FileFormat.xls;
-    if (_isJPEG) return FileFormat.jpeg;
-    if (_isPNG) return FileFormat.png;
-    if (_isSVG) return FileFormat.svg;
-    if (_isDOCX) return FileFormat.docx;
-    if (_isDOC) return FileFormat.doc;
-    if (_isWebP) return FileFormat.webP;
-    if (_isBMP) return FileFormat.bmp;
-    if (_isGIF) return FileFormat.gif;
-    return null;
+    try {
+      if (_isPDF) return FileFormat.pdf;
+      if (_isXLSX) return FileFormat.xlsx;
+      if (_isXLS) return FileFormat.xls;
+      if (_isJPEG) return FileFormat.jpeg;
+      if (_isPNG) return FileFormat.png;
+      if (_isSVG) return FileFormat.svg;
+      if (_isDOCX) return FileFormat.docx;
+      if (_isDOC) return FileFormat.doc;
+      if (_isWebP) return FileFormat.webP;
+      if (_isBMP) return FileFormat.bmp;
+      if (_isGIF) return FileFormat.gif;
+      return null;
+    } catch (e) {
+      return null;
+    }
   }
 
   bool get _isPDF {
