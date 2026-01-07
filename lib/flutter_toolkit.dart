@@ -51,3 +51,4 @@ export 'package:flutter_toolkit/core/models/nullable_date_range.dart';
 export 'package:flutter_toolkit/extensions/widget_states_extension.dart';
 export 'package:flutter_toolkit/extensions/uint8list_extension.dart';
 export 'package:flutter_toolkit/core/models/file_format.dart';
+export 'package:flutter_toolkit/core/models/flexible_image_source.dart';
