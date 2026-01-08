@@ -52,3 +52,4 @@ export 'package:flutter_toolkit/extensions/widget_states_extension.dart';
 export 'package:flutter_toolkit/extensions/uint8list_extension.dart';
 export 'package:flutter_toolkit/core/models/file_format.dart';
 export 'package:flutter_toolkit/core/models/flexible_image_source.dart';
+export 'package:flutter_toolkit/widgets/named_scaffold.dart';
