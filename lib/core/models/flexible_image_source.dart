@@ -9,7 +9,9 @@ sealed class FlexibleImageSource with EquatableMixin {
 
   bool get isSvg => fileFormat == FileFormat.svg;
 
-  bool get supported => this is! FlexibleUnsupportedImageSource;
+  bool get isSupported => this is! FlexibleUnsupportedImageSource;
+
+  bool get isNotSupported => !isSupported;
 
   factory FlexibleImageSource.fromSource(String source) {
     final base64Bytes = source.tryBase64Decode;
