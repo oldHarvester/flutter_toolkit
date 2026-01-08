@@ -49,7 +49,6 @@ sealed class FlexibleImageSource with EquatableMixin {
     return switch (source) {
       FlexibleUnsupportedImageSource _ => source._fileFormat,
       FlexibleAssetImageSource _ => FileFormat.fromFilename(source.source),
-      FlexibleBase64ImageSource _ => FileFormat.fromBytes(source.bytes),
       FlexibleNetworkImageSource _ => FileFormat.fromFilename(source.url),
       FlexibleMemoryImageSource _ => FileFormat.fromBytes(source.bytes),
     };
@@ -61,6 +60,7 @@ class FlexibleUnsupportedImageSource extends FlexibleImageSource {
     required this.source,
     required FileFormat fileFormat,
   }) : _fileFormat = fileFormat;
+
   final String source;
   final FileFormat _fileFormat;
 
@@ -77,22 +77,6 @@ class FlexibleAssetImageSource extends FlexibleImageSource {
 
   @override
   List<Object?> get props => [source];
-}
-
-class FlexibleBase64ImageSource extends FlexibleImageSource {
-  const FlexibleBase64ImageSource({
-    required this.base64,
-    required this.bytes,
-  });
-
-  final Uint8List bytes;
-  final String base64;
-
-  @override
-  List<Object?> get props => [
-        const DeepCollectionEquality().hash(bytes),
-        base64,
-      ];
 }
 
 class FlexibleNetworkImageSource extends FlexibleImageSource {
@@ -116,5 +100,20 @@ class FlexibleMemoryImageSource extends FlexibleImageSource {
   @override
   List<Object?> get props => [
         const DeepCollectionEquality().hash(bytes),
+      ];
+}
+
+class FlexibleBase64ImageSource extends FlexibleMemoryImageSource {
+  const FlexibleBase64ImageSource({
+    required this.base64,
+    required super.bytes,
+  });
+
+  final String base64;
+
+  @override
+  List<Object?> get props => [
+        ...super.props,
+        base64,
       ];
 }
