@@ -13,6 +13,7 @@ class AnimatedVisibility extends StatefulWidget {
     this.sizeAxis = Axis.vertical,
     this.sizeFixedCrossAxisSizeFactor,
     this.disposeWhenHidden = true,
+    this.hiddenBuilder,
     required this.child,
   });
 
@@ -26,6 +27,7 @@ class AnimatedVisibility extends StatefulWidget {
   final double? sizeFixedCrossAxisSizeFactor;
   final Duration? reverseDuration;
   final Curve? reverseCurve;
+  final Widget Function(BuildContext context)? hiddenBuilder;
   final Widget child;
 
   @override
@@ -113,7 +115,9 @@ class _AnimatedVisibilityState extends State<AnimatedVisibility>
             : ValueListenableBuilder(
                 valueListenable: _visible,
                 builder: (context, isVisible, child) {
-                  return isVisible ? widget.child : const SizedBox();
+                  return isVisible
+                      ? widget.child
+                      : widget.hiddenBuilder?.call(context) ?? const SizedBox();
                 },
               ),
       ),
