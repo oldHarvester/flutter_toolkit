@@ -46,12 +46,12 @@ extension IterableExtension<T> on Iterable<T> {
   bool exceedMin(int index) => index < firstIndex;
 
   T? nextFrom(int index) {
-    return elementAtOrNull(index++);
+    return elementAtOrNull(index + 1);
   }
 
   T? previousFrom(int index) {
     if (index <= 0) return null;
-    return elementAtOrNull(index--);
+    return elementAtOrNull(index - 1);
   }
 
   Iterable<T> paginate(int page, int limit) {
