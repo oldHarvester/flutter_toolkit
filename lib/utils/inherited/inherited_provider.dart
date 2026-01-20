@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class InheritedProvider {
   static T of<T extends InheritedWidget>(
     BuildContext context, {
-    bool createDependency = true,
+    required bool createDependency,
   }) {
     try {
       if (createDependency) {
@@ -18,7 +18,7 @@ class InheritedProvider {
 
   static T? maybeOf<T extends InheritedWidget>(
     BuildContext context, {
-    bool createDependency = true,
+    required bool createDependency,
   }) {
     try {
       return of(
