@@ -12,12 +12,11 @@ mixin WidgetStatesMixin<T extends StatefulWidget> on State<T> {
     super.initState();
     final isDisabled = this.isDisabled;
     final isSelected = this.isSelected;
-    statesController = WidgetStatesController(
-      {
-        if (isDisabled != null && isDisabled) WidgetState.disabled,
-        if (isSelected != null && isSelected) WidgetState.selected,
-      },
-    );
+    final states = {
+      if (isDisabled != null && isDisabled) WidgetState.disabled,
+      if (isSelected != null && isSelected) WidgetState.selected,
+    };
+    statesController = WidgetStatesController(states);
   }
 
   @override
