@@ -1,39 +1,67 @@
-import 'package:equatable/equatable.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_toolkit/widgets/custom_switch_button.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_toolkit/flutter_toolkit.dart';
 
-class FlutterToolkitTheme extends InheritedWidget {
+class FlutterToolkitThemeData {
+  const FlutterToolkitThemeData.raw({
+    required this.switchButtonTheme,
+  });
+
+  factory FlutterToolkitThemeData({
+    FlexibleSwitchButtonThemeData? switchButtonTheme,
+  }) {
+    switchButtonTheme ??= FlexibleSwitchButtonThemeData.fromStyle();
+    return FlutterToolkitThemeData.raw(
+      switchButtonTheme: switchButtonTheme,
+    );
+  }
+
+  final FlexibleSwitchButtonThemeData switchButtonTheme;
+}
+
+class FlutterToolkitTheme extends StatelessWidget {
   const FlutterToolkitTheme({
     super.key,
     required this.data,
-    required super.child,
+    required this.child,
   });
 
-  final FlutterToolkitThemeData data;
-
-  static FlutterToolkitThemeData of(BuildContext context) {
-    try {
-      final provider =
-          context.dependOnInheritedWidgetOfExactType<FlutterToolkitTheme>()!;
-      return provider.data;
-    } catch (e) {
-      return const FlutterToolkitThemeData();
-    }
+  static FlutterToolkitThemeData of(
+    BuildContext context, {
+    bool createDependency = true,
+  }) {
+    return InheritedProvider.maybeOf<_InheritedTheme>(
+          context,
+          createDependency: createDependency,
+        )?.data ??
+        FlutterToolkitThemeData();
   }
 
+  final FlutterToolkitThemeData data;
+  final Widget child;
+
   @override
-  bool updateShouldNotify(covariant FlutterToolkitTheme oldWidget) {
-    return oldWidget.data != data;
+  Widget build(BuildContext context) {
+    return _InheritedTheme(
+      data: data,
+      child: child,
+    );
   }
 }
 
-class FlutterToolkitThemeData extends Equatable {
-  const FlutterToolkitThemeData({
-    this.switchButtonTheme = const CustomSwitchButtonTheme(),
+class _InheritedTheme extends InheritedTheme {
+  const _InheritedTheme({
+    required super.child,
+    required this.data,
   });
-
-  final CustomSwitchButtonTheme switchButtonTheme;
+  final FlutterToolkitThemeData data;
 
   @override
-  List<Object?> get props => [switchButtonTheme];
+  bool updateShouldNotify(covariant _InheritedTheme oldWidget) {
+    return data != oldWidget.data;
+  }
+
+  @override
+  Widget wrap(BuildContext context, Widget child) {
+    return FlutterToolkitTheme(data: data, child: child);
+  }
 }

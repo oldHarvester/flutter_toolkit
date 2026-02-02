@@ -5,7 +5,7 @@ export 'package:flutter_toolkit/widgets/timer_builder.dart';
 export 'package:flutter_toolkit/core/throttling/throttling_builder.dart';
 export 'package:flutter_toolkit/core/throttling/throttling_controller.dart';
 export 'package:flutter_toolkit/widgets/theme/flutter_toolkit_theme.dart';
-export 'package:flutter_toolkit/widgets/custom_switch_button.dart';
+export 'package:flutter_toolkit/widgets/flexible_switch_button.dart';
 export 'package:flutter_toolkit/widgets/gestures/single_pointer_recognizer.dart';
 export 'package:flutter_toolkit/widgets/animations/animated_color_builder.dart';
 export 'package:flutter_toolkit/widgets/animations/animated_visibility.dart';

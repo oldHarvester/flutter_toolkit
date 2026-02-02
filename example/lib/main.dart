@@ -1,5 +1,6 @@
-import 'package:example/flexible_grid_example.dart';
 import 'package:flutter/material.dart';
+
+import 'ui_kit_example.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: FlexibleGridExample(),
+      home: UiKitExample(),
     );
   }
 }
