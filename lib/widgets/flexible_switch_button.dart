@@ -51,21 +51,23 @@ class FlexibleSwitchButtonThemeData extends Equatable {
     this.thumbDuration = defaultThumbDuration,
     this.trackCurve = defaultTrackCurve,
     this.trackDuration = defaultTrackDuration,
+    this.thumbPadding = defaultThumbPadding,
   });
 
-  FlexibleSwitchButtonThemeData.fromStyle({
-    Color activeTrackColor = defaultActiveTrackColor,
-    Color inactiveTrackColor = defaultInactiveTrackColor,
-    Color thumbActiveColor = defaultThumbActiveColor,
-    Color thumbInactiveColor = defaultThumbInactiveColor,
-    Color thumbDisabledColor = defaultThumbDisabledColor,
-    Color disabledTrackColor = defaultDisabledTrackColor,
-    this.trackDuration = defaultTrackDuration,
-    this.trackCurve = defaultTrackCurve,
-    this.thumbCurve = defaultThumbCurve,
-    this.thumbDuration = defaultThumbDuration,
-    this.size = defaultSize,
-  })  : trackColor = WidgetStateProperty.resolveWith(
+  FlexibleSwitchButtonThemeData.fromStyle(
+      {Color activeTrackColor = defaultActiveTrackColor,
+      Color inactiveTrackColor = defaultInactiveTrackColor,
+      Color thumbActiveColor = defaultThumbActiveColor,
+      Color thumbInactiveColor = defaultThumbInactiveColor,
+      Color thumbDisabledColor = defaultThumbDisabledColor,
+      Color disabledTrackColor = defaultDisabledTrackColor,
+      this.trackDuration = defaultTrackDuration,
+      this.trackCurve = defaultTrackCurve,
+      this.thumbCurve = defaultThumbCurve,
+      this.thumbDuration = defaultThumbDuration,
+      this.size = defaultSize,
+      this.thumbPadding = defaultThumbPadding})
+      : trackColor = WidgetStateProperty.resolveWith(
           (states) {
             if (states.disabled) {
               return disabledTrackColor;
@@ -106,6 +108,8 @@ class FlexibleSwitchButtonThemeData extends Equatable {
 
   static const defaultThumbDisabledColor = Color(0xFF919090);
 
+  static const defaultThumbPadding = 4.0;
+
   final WidgetStateProperty<Color> trackColor;
   final WidgetStateProperty<Color> thumbColor;
   final Duration thumbDuration;
@@ -113,6 +117,7 @@ class FlexibleSwitchButtonThemeData extends Equatable {
   final Curve thumbCurve;
   final Curve trackCurve;
   final Size size;
+  final double thumbPadding;
 
   @override
   List<Object?> get props => [
@@ -130,23 +135,35 @@ class FlexibleSwitchButton extends StatefulWidget {
   const FlexibleSwitchButton({
     super.key,
     required this.value,
-    this.duration,
-    this.curve,
+    this.thumbCurve,
+    this.thumbDuration,
+    this.trackCurve,
+    this.trackDuration,
     this.onPressed,
     this.autofocus = false,
     this.canRequestFocus,
     this.onFocusChanged,
     this.focusNode,
+    this.size,
+    this.thumbColor,
+    this.thumbPadding,
+    this.trackColor,
   });
 
   final bool value;
-  final Duration? duration;
-  final Curve? curve;
+  final Duration? trackDuration;
+  final Curve? trackCurve;
+  final Duration? thumbDuration;
+  final Curve? thumbCurve;
   final VoidCallback? onPressed;
   final bool autofocus;
   final FocusNode? focusNode;
   final ValueChanged<bool>? onFocusChanged;
   final bool? canRequestFocus;
+  final WidgetStateProperty<Color>? trackColor;
+  final WidgetStateProperty<Color>? thumbColor;
+  final Size? size;
+  final double? thumbPadding;
 
   @override
   State<FlexibleSwitchButton> createState() => _FlexibleSwitchButtonState();
@@ -182,7 +199,12 @@ class _FlexibleSwitchButtonState extends State<FlexibleSwitchButton> {
     final alignment =
         widget.value ? Alignment.centerRight : Alignment.centerLeft;
     final theme = FlutterToolkitTheme.of(context).switchButtonTheme;
-    final size = theme.size;
+    final size = widget.size ?? theme.size;
+    final thumbPadding = widget.thumbPadding ?? theme.thumbPadding;
+    final thumbDuration = widget.thumbDuration ?? theme.thumbDuration;
+    final thumbCurve = widget.thumbCurve ?? theme.thumbCurve;
+    final trackDuration = widget.trackDuration ?? theme.trackDuration;
+    final trackCurve = widget.trackCurve ?? theme.trackCurve;
     return Focus(
       autofocus: widget.autofocus,
       focusNode: widget.focusNode,
@@ -215,13 +237,15 @@ class _FlexibleSwitchButtonState extends State<FlexibleSwitchButton> {
               builder: (context, states, child) {
                 final touching = states.pressed;
                 final disabled = states.disabled;
-                final trackColor = theme.trackColor.resolve(states);
-                final thumbColor = theme.thumbColor.resolve(states);
+                final trackColor =
+                    (widget.trackColor ?? theme.trackColor).resolve(states);
+                final thumbColor =
+                    (widget.thumbColor ?? theme.thumbColor).resolve(states);
                 return AnimatedContainer(
                   width: size.width,
                   height: size.height,
-                  duration: theme.trackDuration,
-                  curve: theme.trackCurve,
+                  duration: trackDuration,
+                  curve: trackCurve,
                   alignment: alignment,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(100),
@@ -229,17 +253,18 @@ class _FlexibleSwitchButtonState extends State<FlexibleSwitchButton> {
                   ),
                   child: LayoutBuilder(
                     builder: (context, constraints) {
-                      final padding = constraints.maxHeight * 4 / 24;
-                      final size = constraints.maxHeight - (padding * 2);
+                      final padding =
+                          constraints.maxHeight * thumbPadding / size.height;
+                      final thumbSize = constraints.maxHeight - (padding * 2);
                       final halfWidth =
                           (constraints.maxWidth - (padding * 2)) / 1.5;
                       return Padding(
                         padding: EdgeInsets.all(padding),
                         child: AnimatedContainer(
-                          duration: theme.thumbDuration,
-                          curve: theme.thumbCurve,
-                          height: size,
-                          width: touching && !disabled ? halfWidth : size,
+                          duration: thumbDuration,
+                          curve: thumbCurve,
+                          height: thumbSize,
+                          width: touching && !disabled ? halfWidth : thumbSize,
                           decoration: BoxDecoration(
                             color: thumbColor,
                             borderRadius: BorderRadius.circular(100),
