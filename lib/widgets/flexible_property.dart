@@ -73,11 +73,4 @@ class FlexiblePropertyLerp<Value, State>
     final resolvedB = b?.resolve(state);
     return lerpFunction(resolvedA, resolvedB, t);
   }
-
-  // @override
-  // T? resolve(Set<WidgetState> states) {
-  //   final T? resolvedA = a?.resolve(states);
-  //   final T? resolvedB = b?.resolve(states);
-  //   return lerpFunction(resolvedA, resolvedB, t);
-  // }
 }
