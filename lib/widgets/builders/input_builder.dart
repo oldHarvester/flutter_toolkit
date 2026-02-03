@@ -38,6 +38,8 @@ abstract class InputBuilderState<T extends InputBuilder> extends State<T> {
     _lastText = _editingController.text;
     _editingNode = widget.inputNode ?? FocusNode();
     _hasFocus = _editingNode.hasFocus;
+    _addEditingListener();
+    _addFocusListener();
   }
 
   void _removeEditingListener() {
