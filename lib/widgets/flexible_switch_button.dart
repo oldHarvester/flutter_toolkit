@@ -158,7 +158,7 @@ class FlexibleSwitchButton extends StatefulWidget {
     this.thumbDuration,
     this.trackCurve,
     this.trackDuration,
-    this.onPressed,
+    this.onChanged,
     this.autofocus = false,
     this.canRequestFocus,
     this.onFocusChanged,
@@ -176,7 +176,7 @@ class FlexibleSwitchButton extends StatefulWidget {
   final Curve? trackCurve;
   final Duration? thumbDuration;
   final Curve? thumbCurve;
-  final VoidCallback? onPressed;
+  final ValueChanged<bool>? onChanged;
   final bool autofocus;
   final FocusNode? focusNode;
   final ValueChanged<bool>? onFocusChanged;
@@ -195,7 +195,7 @@ class FlexibleSwitchButton extends StatefulWidget {
 class _FlexibleSwitchButtonState extends State<FlexibleSwitchButton> {
   late final WidgetStatesController _statesController;
 
-  bool get disabled => widget.onPressed == null;
+  bool get disabled => widget.onChanged == null;
 
   @override
   void initState() {
@@ -230,6 +230,7 @@ class _FlexibleSwitchButtonState extends State<FlexibleSwitchButton> {
     final thumbCurve = widget.thumbCurve ?? theme.thumbCurve;
     final trackDuration = widget.trackDuration ?? theme.trackDuration;
     final trackCurve = widget.trackCurve ?? theme.trackCurve;
+    final onChanged = widget.onChanged;
     return Focus(
       autofocus: widget.autofocus,
       focusNode: widget.focusNode,
@@ -240,7 +241,11 @@ class _FlexibleSwitchButtonState extends State<FlexibleSwitchButton> {
       },
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
-        onTap: widget.onPressed,
+        onTap: onChanged == null
+            ? null
+            : () {
+                onChanged(!widget.value);
+              },
         onTapDown: (details) {
           _statesController.update(WidgetState.pressed, true);
         },
@@ -266,8 +271,12 @@ class _FlexibleSwitchButtonState extends State<FlexibleSwitchButton> {
                   (widget.trackColor ?? theme.trackColor).resolve(states);
               final thumbColor =
                   (widget.thumbColor ?? theme.thumbColor).resolve(states);
-              final thumbBoxShadow = (widget.thumbBoxShadow ?? theme.thumbBoxShadow).resolve(states);
-              final trackBoxShadow = (widget.trackBoxShadow ?? theme.trackBoxShadow).resolve(states);
+              final thumbBoxShadow =
+                  (widget.thumbBoxShadow ?? theme.thumbBoxShadow)
+                      .resolve(states);
+              final trackBoxShadow =
+                  (widget.trackBoxShadow ?? theme.trackBoxShadow)
+                      .resolve(states);
               return AnimatedContainer(
                 width: size.width,
                 height: size.height,
