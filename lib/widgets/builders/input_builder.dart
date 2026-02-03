@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 abstract class InputBuilder extends StatefulWidget {
   const InputBuilder({
     super.key,
-    this.editingController,
-    this.editingNode,
-    this.onEditingChanged,
-    this.onEditingFocusChanged,
+    this.inputController,
+    this.inputNode,
+    this.onInputChanged,
+    this.onInputFocusChanged,
   });
 
-  final TextEditingController? editingController;
-  final FocusNode? editingNode;
-  final ValueChanged<bool>? onEditingFocusChanged;
-  final ValueChanged<String>? onEditingChanged;
+  final TextEditingController? inputController;
+  final FocusNode? inputNode;
+  final ValueChanged<bool>? onInputFocusChanged;
+  final ValueChanged<String>? onInputChanged;
 
   @override
   InputBuilderState createState();
@@ -27,16 +27,16 @@ abstract class InputBuilderState<T extends InputBuilder> extends State<T> {
 
   late bool _hasFocus;
 
-  TextEditingController get editingController => _editingController;
+  TextEditingController get inputController => _editingController;
 
-  FocusNode get editingNode => _editingNode;
+  FocusNode get inputNode => _editingNode;
 
   @override
   void initState() {
     super.initState();
-    _editingController = widget.editingController ?? TextEditingController();
+    _editingController = widget.inputController ?? TextEditingController();
     _lastText = _editingController.text;
-    _editingNode = widget.editingNode ?? FocusNode();
+    _editingNode = widget.inputNode ?? FocusNode();
     _hasFocus = _editingNode.hasFocus;
   }
 
@@ -60,7 +60,7 @@ abstract class InputBuilderState<T extends InputBuilder> extends State<T> {
     final currentText = _editingController.text;
     if (currentText != _lastText) {
       _lastText = currentText;
-      widget.onEditingChanged?.call(currentText);
+      widget.onInputChanged?.call(currentText);
     }
   }
 
@@ -68,7 +68,7 @@ abstract class InputBuilderState<T extends InputBuilder> extends State<T> {
     final hasFocus = _editingNode.hasFocus;
     if (_hasFocus != hasFocus) {
       _hasFocus = hasFocus;
-      widget.onEditingFocusChanged?.call(hasFocus);
+      widget.onInputFocusChanged?.call(hasFocus);
     }
   }
 
@@ -107,24 +107,24 @@ abstract class InputBuilderState<T extends InputBuilder> extends State<T> {
 
   @override
   void didUpdateWidget(T oldWidget) {
-    if (widget.editingController != oldWidget.editingController) {
+    if (widget.inputController != oldWidget.inputController) {
       _onEditingControllerChanged(
-        oldWidget.editingController,
-        widget.editingController,
+        oldWidget.inputController,
+        widget.inputController,
       );
     }
-    if (widget.editingNode != oldWidget.editingNode) {
-      _onFocusNodesChanged(oldWidget.editingNode, widget.editingNode);
+    if (widget.inputNode != oldWidget.inputNode) {
+      _onFocusNodesChanged(oldWidget.inputNode, widget.inputNode);
     }
     super.didUpdateWidget(oldWidget);
   }
 
   @override
   void dispose() {
-    if (widget.editingController == null) {
+    if (widget.inputController == null) {
       _editingController.dispose();
     }
-    if (widget.editingNode == null) {
+    if (widget.inputNode == null) {
       _editingNode.dispose();
     }
     super.dispose();
