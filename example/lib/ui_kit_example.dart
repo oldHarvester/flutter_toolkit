@@ -20,7 +20,7 @@ class _UiKitExampleState extends State<UiKitExample> {
             children: [
               FlexibleSwitchButton(
                 value: true,
-                onPressed: () {},
+                onChanged: (value) {},
               ),
             ],
           ),
