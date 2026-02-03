@@ -1,23 +1,20 @@
-import 'package:flutter/material.dart';
-
-typedef NewWidgetStateProperty<T> = FlexibleProperty<T, Set<WidgetState>>;
+import 'package:collection/collection.dart';
+import 'package:equatable/equatable.dart';
 
 typedef FlexiblePropertyResolver<Value, State> = Value Function(
   State state,
 );
 
 abstract class FlexibleProperty<Value, State> {
-  Value resolve(State state);
+  const FlexibleProperty();
 
-  static FlexibleProperty<Value, State> resolveWith<Value, State>(
-    FlexiblePropertyResolver<Value, State> callback,
-  ) {
-    return FlexiblePropertyResolveWith<Value, State>(callback);
-  }
+  const factory FlexibleProperty.all({
+    required Value value,
+  }) = FlexiblePropertyAll<Value, State>;
 
-  static FlexibleProperty<Value, State> all<Value, State>(Value value) {
-    return FlexiblePropertyAll(value: value);
-  }
+  const factory FlexibleProperty.resolveWith(
+    FlexiblePropertyResolver<Value, State> resolver,
+  ) = FlexiblePropertyResolveWith<Value, State>;
 
   static FlexibleProperty<Value?, State> lerp<Value, State>({
     required double t,
@@ -32,19 +29,26 @@ abstract class FlexibleProperty<Value, State> {
       lerpFunction: lerpFunction,
     );
   }
+
+  Value resolve(State state);
 }
 
-class FlexiblePropertyAll<Value, State>
-    implements FlexibleProperty<Value, State> {
+class FlexiblePropertyAll<Value, State> extends FlexibleProperty<Value, State>
+    with EquatableMixin {
   const FlexiblePropertyAll({required this.value});
   final Value value;
 
   @override
   Value resolve(State state) => value;
+
+  @override
+  List<Object?> get props => [
+        value is Iterable ? DeepCollectionEquality().hash(value) : value,
+      ];
 }
 
 class FlexiblePropertyResolveWith<Value, State>
-    implements FlexibleProperty<Value, State> {
+    extends FlexibleProperty<Value, State> {
   const FlexiblePropertyResolveWith(this.resolver);
 
   final FlexiblePropertyResolver<Value, State> resolver;
