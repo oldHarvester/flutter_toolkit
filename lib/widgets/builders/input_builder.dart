@@ -61,14 +61,20 @@ abstract class InputBuilderState<T extends InputBuilder> extends State<T> {
     if (currentText != _lastText) {
       _lastText = currentText;
       widget.onInputChanged?.call(currentText);
+      onInputChanged(currentText);
     }
   }
+
+  void onInputFocusChanged(bool hasFocus) {}
+
+  void onInputChanged(String value) {}
 
   void _focusListener() {
     final hasFocus = _editingNode.hasFocus;
     if (_hasFocus != hasFocus) {
       _hasFocus = hasFocus;
       widget.onInputFocusChanged?.call(hasFocus);
+      onInputFocusChanged(hasFocus);
     }
   }
 
