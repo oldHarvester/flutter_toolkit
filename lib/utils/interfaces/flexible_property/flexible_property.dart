@@ -15,18 +15,13 @@ abstract class FlexibleProperty<Value, State> {
     FlexiblePropertyResolver<Value, State> resolver,
   ) = FlexiblePropertyResolveWith<Value, State>;
 
-  static FlexibleProperty<Value?, State> lerp<Value, State>({
-    required double t,
-    required Value? Function(Value? old, Value? current, double t) lerpFunction,
+  static FlexibleProperty<Value?, State> lerp<Value, State>(
     FlexibleProperty<Value, State>? a,
     FlexibleProperty<Value, State>? b,
-  }) {
-    return FlexiblePropertyLerp<Value, State>(
-      a: a,
-      b: b,
-      t: t,
-      lerpFunction: lerpFunction,
-    );
+    double t,
+    Value? Function(Value? old, Value? current, double t) lerpFunction,
+  ) {
+    return FlexiblePropertyLerp<Value, State>(a, b, t, lerpFunction);
   }
 
   Value resolve(State state);
@@ -42,7 +37,9 @@ class FlexiblePropertyAll<Value, State> extends FlexibleProperty<Value, State>
 
   @override
   List<Object?> get props => [
-        value is Iterable ? DeepCollectionEquality().hash(value) : value,
+        value is Map || value is Iterable
+            ? DeepCollectionEquality().hash(value)
+            : value,
       ];
 }
 
@@ -58,12 +55,12 @@ class FlexiblePropertyResolveWith<Value, State>
 
 class FlexiblePropertyLerp<Value, State>
     implements FlexibleProperty<Value?, State> {
-  const FlexiblePropertyLerp({
-    required this.a,
-    required this.b,
-    required this.t,
-    required this.lerpFunction,
-  });
+  const FlexiblePropertyLerp(
+    this.a,
+    this.b,
+    this.t,
+    this.lerpFunction,
+  );
 
   final double t;
   final FlexibleProperty<Value, State>? a;
