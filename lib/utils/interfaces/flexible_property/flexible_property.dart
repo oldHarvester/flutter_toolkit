@@ -8,9 +8,8 @@ typedef FlexiblePropertyResolver<Value, State> = Value Function(
 abstract class FlexibleProperty<Value, State> {
   const FlexibleProperty();
 
-  const factory FlexibleProperty.all({
-    required Value value,
-  }) = FlexiblePropertyAll<Value, State>;
+  const factory FlexibleProperty.all(Value value) =
+      FlexiblePropertyAll<Value, State>;
 
   const factory FlexibleProperty.resolveWith(
     FlexiblePropertyResolver<Value, State> resolver,
@@ -35,7 +34,7 @@ abstract class FlexibleProperty<Value, State> {
 
 class FlexiblePropertyAll<Value, State> extends FlexibleProperty<Value, State>
     with EquatableMixin {
-  const FlexiblePropertyAll({required this.value});
+  const FlexiblePropertyAll(this.value);
   final Value value;
 
   @override
