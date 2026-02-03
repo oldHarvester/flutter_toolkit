@@ -92,6 +92,7 @@ abstract class InputBuilderState<T extends InputBuilder> extends State<T> {
 
   void _onFocusNodesChanged(FocusNode? old, FocusNode? current) {
     _removeFocusListener();
+
     if (old != null && current != null) {
       _editingNode = current;
     } else if (old != null && current == null) {
