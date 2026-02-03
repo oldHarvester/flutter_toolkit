@@ -55,3 +55,4 @@ export 'package:flutter_toolkit/widgets/named_scaffold.dart';
 export 'package:flutter_toolkit/extensions/duration_extension.dart';
 export 'package:flutter_toolkit/utils/executors/flexible_timer.dart';
 export 'package:flutter_toolkit/core/flexible_widget_state_controller.dart';
+export 'package:flutter_toolkit/widgets/builders/input_builder.dart';
