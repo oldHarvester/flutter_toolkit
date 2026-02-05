@@ -28,7 +28,7 @@ abstract class FlexibleProperty<Value, State> {
     FlexibleProperty<Value, State> a,
     FlexibleProperty<Value, State> b,
     double t,
-    Value Function(Value old, Value current, double t) lerpFunction,
+    Value Function(Value a, Value b, double t) lerpFunction,
   ) {
     return FlexiblePropertyForceLerp<Value, State>(a, b, t, lerpFunction);
   }
@@ -74,7 +74,7 @@ class FlexiblePropertyLerp<Value, State>
   final double t;
   final FlexibleProperty<Value, State>? a;
   final FlexibleProperty<Value, State>? b;
-  final Value? Function(Value? old, Value? current, double t) lerpFunction;
+  final Value? Function(Value? a, Value? b, double t) lerpFunction;
 
   @override
   Value? resolve(State state) {
