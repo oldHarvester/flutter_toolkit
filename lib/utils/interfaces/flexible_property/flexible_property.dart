@@ -15,11 +15,11 @@ abstract class FlexibleProperty<Value, State> {
     FlexiblePropertyResolver<Value, State> resolver,
   ) = FlexiblePropertyResolveWith<Value, State>;
 
-  static FlexibleProperty<Value?, State> lerp<Value, State>(
+  static FlexibleProperty<Value, State> lerp<Value, State>(
     FlexibleProperty<Value, State>? a,
     FlexibleProperty<Value, State>? b,
     double t,
-    Value? Function(Value? old, Value? current, double t) lerpFunction,
+    Value Function(Value? old, Value? current, double t) lerpFunction,
   ) {
     return FlexiblePropertyLerp<Value, State>(a, b, t, lerpFunction);
   }
@@ -54,7 +54,7 @@ class FlexiblePropertyResolveWith<Value, State>
 }
 
 class FlexiblePropertyLerp<Value, State>
-    implements FlexibleProperty<Value?, State> {
+    implements FlexibleProperty<Value, State> {
   const FlexiblePropertyLerp(
     this.a,
     this.b,
@@ -65,10 +65,10 @@ class FlexiblePropertyLerp<Value, State>
   final double t;
   final FlexibleProperty<Value, State>? a;
   final FlexibleProperty<Value, State>? b;
-  final Value? Function(Value? old, Value? current, double t) lerpFunction;
+  final Value Function(Value? old, Value? current, double t) lerpFunction;
 
   @override
-  Value? resolve(State state) {
+  Value resolve(State state) {
     final resolvedA = a?.resolve(state);
     final resolvedB = b?.resolve(state);
     return lerpFunction(resolvedA, resolvedB, t);
