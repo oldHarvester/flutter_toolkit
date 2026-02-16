@@ -16,12 +16,20 @@ mixin InputBuilderStateMixin<T extends InputBuilderBase> on State<T> {
   @override
   void initState() {
     super.initState();
-    _controller = widget.controller ?? TextEditingController();
+    _controller = widget.controller ?? createController();
     _lastText = _controller.text;
-    _focusNode = widget.focusNode ?? FocusNode();
+    _focusNode = widget.focusNode ?? createNode();
     _hasFocus = _focusNode.hasFocus;
     _addEditingListener();
     _addFocusListener();
+  }
+
+  TextEditingController createController([String? text]) {
+    return TextEditingController();
+  }
+
+  FocusNode createNode() {
+    return FocusNode();
   }
 
   void _removeEditingListener() {
