@@ -18,14 +18,14 @@ mixin InputBuilderStateMixin<T extends InputBuilderBase> on State<T> {
     super.initState();
     _controller = widget.controller ?? createController();
     _lastText = _controller.text;
-    _focusNode = widget.focusNode ?? createNode();
+    _focusNode = widget.focusNode ?? FocusNode();
     _hasFocus = _focusNode.hasFocus;
     _addEditingListener();
     _addFocusListener();
   }
 
   TextEditingController createController([String? text]) {
-    return TextEditingController();
+    return TextEditingController(text: text);
   }
 
   FocusNode createNode() {
