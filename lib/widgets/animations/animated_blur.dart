@@ -5,12 +5,16 @@ class AnimatedBlur extends StatefulWidget {
   const AnimatedBlur({
     super.key,
     required this.animate,
+    this.begin = const Offset(0, 0),
+    this.end = const Offset(10, 10),
     this.duration = const Duration(milliseconds: 200),
     required this.child,
   });
 
   final bool animate;
   final Widget child;
+  final Offset begin;
+  final Offset end;
   final Duration duration;
 
   @override
@@ -53,8 +57,8 @@ class _AnimatedBlurState extends State<AnimatedBlur>
       effects: [
         BlurEffect(
           duration: widget.duration,
-          begin: const Offset(0, 0),
-          end: const Offset(10, 10),
+          begin: widget.begin,
+          end: widget.end,
         ),
       ],
       child: widget.child,
