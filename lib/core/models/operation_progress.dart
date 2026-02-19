@@ -65,6 +65,18 @@ sealed class OperationProgress<T> {
     required StackTrace stackTrace,
   }) = OperationProgressFailed;
 
+  T? get valueOrNull {
+    return map(
+      onSuccess: (result) => result,
+    );
+  }
+
+  Object? get errorOrNull {
+    return map(
+      onError: (error, stackTrace) => error,
+    );
+  }
+
   WhenValue when<WhenValue>({
     required WhenValue Function() idle,
     required WhenValue Function() processing,
@@ -79,12 +91,12 @@ sealed class OperationProgress<T> {
     };
   }
 
-  MapValue? map<MapValue>(
+  MapValue? map<MapValue>({
     MapValue? Function()? idle,
     MapValue? Function()? processing,
     MapValue? Function(T result)? onSuccess,
     MapValue? Function(Object error, StackTrace stackTrace)? onError,
-  ) {
+  }) {
     return when(
       idle: () => idle?.call(),
       processing: () => processing?.call(),
