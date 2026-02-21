@@ -61,3 +61,4 @@ export 'package:flutter_toolkit/utils/interfaces/flexible_property/flexible_prop
 export 'package:flutter_toolkit/core/throttling/throttle_listenable_builder.dart';
 export 'package:flutter_toolkit/core/throttling/throttle_value_listenable_builder.dart';
 export 'package:flutter_toolkit/utils/executors/auto_restart_executor.dart';
+export 'package:flutter_toolkit/widgets/scroll_controllers/looped_fixed_extent_scroll_controller.dart';
