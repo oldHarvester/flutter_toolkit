@@ -9,12 +9,14 @@ abstract class InputBuilderBase extends StatefulWidget {
     required this.focusNode,
     required this.onFocusChanged,
     required this.onChanged,
+    this.initialValue,
   });
 
   final TextEditingController? controller;
   final FocusNode? focusNode;
   final ValueChanged<bool>? onFocusChanged;
   final ValueChanged<String>? onChanged;
+  final String? initialValue;
 }
 
 abstract class InputBuilderState<T extends InputBuilderBase> extends State<T>
