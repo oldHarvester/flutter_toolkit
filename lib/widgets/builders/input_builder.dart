@@ -29,6 +29,7 @@ abstract class InputBuilder extends StatefulWidget implements InputBuilderBase {
     this.focusNode,
     this.onChanged,
     this.onFocusChanged,
+    this.initialValue,
   });
 
   @override
@@ -42,6 +43,9 @@ abstract class InputBuilder extends StatefulWidget implements InputBuilderBase {
 
   @override
   final ValueChanged<bool>? onFocusChanged;
+
+  @override
+  final String? initialValue;
 
   @override
   InputBuilderState createState();
