@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:equatable/equatable.dart';
@@ -52,6 +53,27 @@ sealed class FileFormat with EquatableMixin {
       }
     }
     return FileFormat.unknown(string);
+  }
+
+  factory FileFormat.fromBase64(String base64) {
+    final bytes = base64Decode(base64);
+    return FileFormat.fromBytes(bytes);
+  }
+
+  static FileFormat? tryFromBytes(Uint8List bytes) {
+    try {
+      return FileFormat.fromBytes(bytes);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  static FileFormat? tryFromBase64(String base64) {
+    try {
+      return FileFormat.fromBase64(base64);
+    } catch (e) {
+      return null;
+    }
   }
 
   static FileFormat? tryFromFilename(String filename) {
