@@ -120,6 +120,8 @@ mixin InputBuilderStateMixin<T extends InputBuilderBase> on State<T> {
 
   @override
   void dispose() {
+    _removeEditingListener();
+    _removeFocusListener();
     if (widget.controller == null) {
       _controller.dispose();
     }
