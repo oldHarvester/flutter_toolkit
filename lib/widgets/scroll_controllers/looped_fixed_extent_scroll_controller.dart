@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 class LoopedFixedExtentScrollController extends FixedExtentScrollController {
   LoopedFixedExtentScrollController({
     super.initialItem,
-    super.debugLabel,
     super.onAttach,
     super.onDetach,
     required this.totalCount,
