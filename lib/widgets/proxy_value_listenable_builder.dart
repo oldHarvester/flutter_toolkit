@@ -23,44 +23,49 @@ class ProxyValueListenableBuilder<T, Z> extends StatefulWidget {
 class _ProxyValueListenableBuilderState<T, Z>
     extends State<ProxyValueListenableBuilder<T, Z>> {
   late ValueListenable<T> _listenable;
-  late final ValueNotifier<Z> _proxyListenable;
+  late final ValueNotifier<Z> _proxyListenable = ValueNotifier(transformedValue);
 
   @override
   void initState() {
     super.initState();
-    _initializeListener(widget.valueListenable);
+    _initialize(widget.valueListenable);
+    _addListener();
   }
 
   Z get transformedValue {
     return widget.transform(_listenable.value);
   }
 
+  void _removeListener() {
+    _listenable.removeListener(_listener);
+  }
+
+  void _addListener() {
+    _listenable.addListener(_listener);
+  }
+
   void _listener() {
     _proxyListenable.value = transformedValue;
   }
 
-  void _initializeListener(ValueListenable<T> listenable) {
+  void _initialize(ValueListenable<T> listenable) {
     _listenable = listenable;
-    _proxyListenable = ValueNotifier(transformedValue);
-    _listenable.addListener(_listener);
-  }
-
-  void _clearListenable() {
-    _listenable.removeListener(_listener);
+    _proxyListenable.value = transformedValue;
   }
 
   @override
   void didUpdateWidget(covariant ProxyValueListenableBuilder<T, Z> oldWidget) {
     if (oldWidget.valueListenable != widget.valueListenable) {
-      _clearListenable();
-      _initializeListener(widget.valueListenable);
+      _removeListener();
+      _initialize(widget.valueListenable);
+      _addListener();
     }
     super.didUpdateWidget(oldWidget);
   }
 
   @override
   void dispose() {
-    _clearListenable();
+    _removeListener();
     _proxyListenable.dispose();
     super.dispose();
   }
