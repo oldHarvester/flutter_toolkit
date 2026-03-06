@@ -63,3 +63,4 @@ export 'package:flutter_toolkit/core/throttling/throttle_value_listenable_builde
 export 'package:flutter_toolkit/utils/executors/auto_restart_executor.dart';
 export 'package:flutter_toolkit/widgets/scroll_controllers/looped_fixed_extent_scroll_controller.dart';
 export 'package:flutter_toolkit/extensions/text_editing_controller_extension.dart';
+export 'package:flutter_toolkit/extensions/paginated_map_extension.dart';
