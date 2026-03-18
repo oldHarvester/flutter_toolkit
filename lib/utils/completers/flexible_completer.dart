@@ -27,6 +27,7 @@ class FlexibleCompleter<T> {
     this.onTimeout,
     this.onReceived,
   }) {
+    _completer.future.ignore();
     if (timeoutDuration != null) {
       _timeoutExecutor.execute(
         duration: timeoutDuration!,
