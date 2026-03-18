@@ -27,6 +27,11 @@ class FlexibleCompleter<T> {
     this.onTimeout,
     this.onReceived,
   }) {
+    _completer.future.catchError(
+      // ignore: body_might_complete_normally_catch_error
+      (_, __) {},
+      test: (e) => e is FlexibleCompleterException,
+    );
     if (timeoutDuration != null) {
       _timeoutExecutor.execute(
         duration: timeoutDuration!,
