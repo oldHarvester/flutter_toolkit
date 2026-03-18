@@ -13,6 +13,8 @@ typedef AutoRestartExecutorErrorHandler = FutureOr<bool?> Function(
   StackTrace stackTrace,
 );
 
+typedef ErrorStacktrace = ({Object error, StackTrace stackTrace});
+
 class AutoRestartExecutor<T> {
   AutoRestartExecutor({
     required this.handler,
@@ -74,16 +76,26 @@ class AutoRestartExecutor<T> {
 
   bool get cancelled => _cancelled;
 
+  bool _timeoutCancelled = false;
+
+  ErrorStacktrace? _errorStacktrace;
+
   bool get retriesLimitExceed {
     final max = maxRetries;
     if (max == null) return false;
     return _retries >= max;
   }
 
-  void cancel() {
+  void cancel([ErrorStacktrace? errorStackTrace]) {
+    final errStk = errorStackTrace ??
+        _errorStacktrace ??
+        (
+          error: Exception('Timeout'),
+          stackTrace: StackTrace.current,
+        );
     _cancelled = true;
     _cancelTimer();
-    _completer.cancel();
+    _completer.completeError(errStk.error, errStk.stackTrace);
     cancelTimeout();
   }
 
@@ -105,23 +117,28 @@ class AutoRestartExecutor<T> {
     return completer.future;
   }
 
-  Future<T> start() async {
+  void startTimeoutTimer() {
+    if (_timeoutCancelled) return;
     final timeOutDuration = this.timeOutDuration;
-    if (!started) {
-      if (timeOutDuration != null) {
-        _timeOutTimer ??= Timer(
-          timeOutDuration,
-          () {
-            cancel();
-          },
-        );
-      }
+    if (timeOutDuration != null) {
+      _timeOutTimer ??= Timer(
+        timeOutDuration,
+        () {
+          cancel();
+        },
+      );
+    }
+  }
+
+  Future<T> start() async {
+    if (!_started) {
       _executor();
     }
     return future;
   }
 
   void cancelTimeout() {
+    _timeoutCancelled = true;
     _timeOutTimer?.cancel();
     _timeOutTimer = null;
   }
@@ -135,12 +152,16 @@ class AutoRestartExecutor<T> {
     if (cancelled) return;
     _started = true;
     _retries++;
+    if (retries > 0) {
+      startTimeoutTimer();
+    }
     try {
       final result = await handler();
       if (cancelled) return;
       _completer.complete(result);
       onSuccess?.call(result);
     } catch (e, stk) {
+      _errorStacktrace = (error: e, stackTrace: stk);
       if (cancelled) return;
       final errorResult = (await onError?.call(retries, e, stk)) ?? true;
       if (!errorResult) {
