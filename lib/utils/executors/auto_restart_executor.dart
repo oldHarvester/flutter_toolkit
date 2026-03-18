@@ -7,7 +7,7 @@ typedef AutoRestartExecutorHandler<T> = FutureOr<T> Function();
 typedef AutoRestartExecutorSuccessHandler<T> = void Function(T result);
 
 /// Return false if u want to throw error
-typedef AutoRestartExecutorErrorHandler = FutureOr<bool>? Function(
+typedef AutoRestartExecutorErrorHandler = FutureOr<bool?> Function(
   Object error,
   StackTrace stackTrace,
 );
