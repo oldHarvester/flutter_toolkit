@@ -26,7 +26,9 @@ class FlexibleCompleter<T> {
     this.timeoutDuration,
     this.onTimeout,
     this.onReceived,
+    bool synchronous = true,
   }) {
+    _completer = synchronous ? Completer.sync() : Completer();
     _completer.future.ignore();
     if (timeoutDuration != null) {
       _timeoutExecutor.execute(
@@ -52,7 +54,7 @@ class FlexibleCompleter<T> {
 
   final Duration? timeoutDuration;
 
-  final Completer<T> _completer = Completer<T>()..future.ignore();
+  late final Completer<T> _completer;
 
   final ThrottleExecutor _timeoutExecutor = ThrottleExecutor();
 

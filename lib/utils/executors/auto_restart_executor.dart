@@ -1,70 +1,156 @@
 import 'dart:async';
 
-import 'package:flutter_toolkit/core/models/operation_result.dart';
 import 'package:flutter_toolkit/utils/completers/flexible_completer.dart';
 
 typedef AutoRestartExecutorHandler<T> = FutureOr<T> Function();
 
-typedef AutoRestartExecutorResultHandler<T> = void Function(
-    OperationResult<T> result);
+typedef AutoRestartExecutorSuccessHandler<T> = void Function(T result);
+
+/// Return false if u want to throw error
+typedef AutoRestartExecutorErrorHandler = FutureOr<bool>? Function(
+  Object error,
+  StackTrace stackTrace,
+);
 
 class AutoRestartExecutor<T> {
   AutoRestartExecutor({
     required this.handler,
-    this.onResult,
     this.autoStart = true,
+    this.onSuccess,
+    this.onError,
+    this.maxRetries,
+    this.timeOutDuration,
     this.restartDuration = const Duration(seconds: 5),
   }) {
     if (autoStart) {
-      startExecute();
+      start();
     }
   }
 
   final AutoRestartExecutorHandler<T> handler;
 
-  final AutoRestartExecutorResultHandler<T>? onResult;
+  final AutoRestartExecutorSuccessHandler<T>? onSuccess;
+
+  final AutoRestartExecutorErrorHandler? onError;
 
   final Duration restartDuration;
 
+  final Duration? timeOutDuration;
+
   final bool autoStart;
+
+  final int? maxRetries;
 
   final FlexibleCompleter<T> _completer = FlexibleCompleter();
 
-  Future<T?> get future {
+  FlexibleCompleter<void>? _timerCompleter;
+
+  Timer? _timer;
+
+  Timer? _timeOutTimer;
+
+  Future<T> get future {
     return _completer.future;
   }
 
-  bool _disposed = false;
+  Future<T?> get futureOrNull async {
+    try {
+      return await future;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  bool _cancelled = false;
 
   bool _started = false;
 
+  int _retries = -1;
+
+  int get retries => _retries;
+
   bool get started => _started;
 
-  bool get disposed => _disposed;
+  bool get cancelled => _cancelled;
 
-  void dispose() {
-    _disposed = true;
-    _completer.cancel(null);
+  bool get retriesLimitExceed {
+    final max = maxRetries;
+    if (max == null) return false;
+    return _retries >= max;
   }
 
-  Future<T?> startExecute() async {
-    if (started) return null;
+  void cancel() {
+    _cancelled = true;
+    _cancelTimer();
+    _completer.cancel();
+    cancelTimeout();
+  }
+
+  void _cancelTimer() {
+    _timer?.cancel();
+    _timerCompleter?.complete();
+  }
+
+  Future<void> _wait(Duration duration) {
+    _cancelTimer();
+    final completer = FlexibleCompleter();
+    _timerCompleter = completer;
+    _timer = Timer(
+      duration,
+      () {
+        completer.complete();
+      },
+    );
+    return completer.future;
+  }
+
+  Future<T> start() async {
+    final timeOutDuration = this.timeOutDuration;
+    if (!started) {
+      if (timeOutDuration != null) {
+        _timeOutTimer ??= Timer(
+          timeOutDuration,
+          () {
+            cancel();
+          },
+        );
+      }
+      _executor();
+    }
+    return future;
+  }
+
+  void cancelTimeout() {
+    _timeOutTimer?.cancel();
+    _timeOutTimer = null;
+  }
+
+  void _completeWithError(Object error, StackTrace stackTrace) {
+    _completer.completeError(error, stackTrace);
+    cancel();
+  }
+
+  Future<void> _executor() async {
+    if (cancelled) return;
     _started = true;
-    return _executor();
-  }
-
-  Future<T?> _executor() async {
-    if (disposed) return null;
+    _retries++;
     try {
       final result = await handler();
-      if (disposed) return null;
-      onResult?.call(OperationResult.success(result));
+      if (cancelled) return;
       _completer.complete(result);
-      return result;
+      onSuccess?.call(result);
     } catch (e, stk) {
-      if (disposed) return null;
-      onResult?.call(OperationResult.failed(error: e, stackTrace: stk));
-      await Future.delayed(restartDuration);
+      if (cancelled) return;
+      final errorResult = (await onError?.call(e, stk)) ?? true;
+      if (!errorResult) {
+        _completeWithError(e, stk);
+        return;
+      }
+      if (retriesLimitExceed) {
+        _completeWithError(e, stk);
+        return;
+      }
+      await _wait(restartDuration);
       return _executor();
     }
   }
