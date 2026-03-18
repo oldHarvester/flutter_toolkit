@@ -52,7 +52,7 @@ class FlexibleCompleter<T> {
 
   final Duration? timeoutDuration;
 
-  final Completer<T> _completer = Completer<T>();
+  final Completer<T> _completer = Completer<T>()..future.ignore();
 
   final ThrottleExecutor _timeoutExecutor = ThrottleExecutor();
 
