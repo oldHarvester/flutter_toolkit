@@ -8,6 +8,7 @@ typedef AutoRestartExecutorSuccessHandler<T> = void Function(T result);
 
 /// Return false if u want to throw error
 typedef AutoRestartExecutorErrorHandler = FutureOr<bool?> Function(
+  int retries,
   Object error,
   StackTrace stackTrace,
 );
@@ -141,7 +142,7 @@ class AutoRestartExecutor<T> {
       onSuccess?.call(result);
     } catch (e, stk) {
       if (cancelled) return;
-      final errorResult = (await onError?.call(e, stk)) ?? true;
+      final errorResult = (await onError?.call(retries, e, stk)) ?? true;
       if (!errorResult) {
         _completeWithError(e, stk);
         return;
