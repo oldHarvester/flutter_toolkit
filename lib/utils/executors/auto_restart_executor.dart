@@ -13,6 +13,12 @@ typedef AutoRestartExecutorErrorHandler = FutureOr<bool?> Function(
   StackTrace stackTrace,
 );
 
+typedef AutoRestartExecutorOnRetryStarted = void Function(
+  int retry,
+  Object error,
+  StackTrace stackTrace,
+);
+
 typedef ErrorStacktrace = ({Object error, StackTrace stackTrace});
 
 class AutoRestartExecutor<T> {
@@ -22,6 +28,7 @@ class AutoRestartExecutor<T> {
     this.onSuccess,
     this.onError,
     this.maxRetries,
+    this.onRetryStarted,
     this.timeOutDuration,
     this.restartDuration = const Duration(seconds: 5),
   }) {
@@ -35,6 +42,8 @@ class AutoRestartExecutor<T> {
   final AutoRestartExecutorSuccessHandler<T>? onSuccess;
 
   final AutoRestartExecutorErrorHandler? onError;
+
+  final AutoRestartExecutorOnRetryStarted? onRetryStarted;
 
   final Duration restartDuration;
 
@@ -152,6 +161,10 @@ class AutoRestartExecutor<T> {
     if (cancelled) return;
     _started = true;
     _retries++;
+    final lastErrStk = _errorStacktrace;
+    if (lastErrStk != null) {
+      onRetryStarted?.call(retries, lastErrStk.error, lastErrStk.stackTrace);
+    }
     if (retries > 0) {
       startTimeoutTimer();
     }
