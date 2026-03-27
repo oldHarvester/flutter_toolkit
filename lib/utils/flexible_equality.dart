@@ -56,4 +56,55 @@ abstract final class FlexibleEquality {
     if (a is Object && b is Object) return equals(a, b);
     return a == b;
   }
+
+  static int hash(Object? obj) {
+    if (obj == null) return null.hashCode;
+
+    return switch (obj) {
+      final List<dynamic> l => listHash(l),
+      final Set<dynamic> s => setHash(s),
+      final Map<dynamic, dynamic> m => mapHash(m),
+      final Iterable<dynamic> i => iterableHash(i),
+      _ => obj.hashCode,
+    };
+  }
+
+  static int listHash(List<dynamic> list) {
+    var result = 0;
+    for (final item in list) {
+      result = Object.hash(result, itemHash(item));
+    }
+    return Object.hash(List, result);
+  }
+
+  static int setHash(Set<dynamic> set) {
+    // XOR — порядок не важен, как и в setsEquals
+    var result = 0;
+    for (final item in set) {
+      result ^= itemHash(item);
+    }
+    return Object.hash(Set, result);
+  }
+
+  static int mapHash(Map<dynamic, dynamic> map) {
+    // XOR пар ключ+значение — порядок ключей не важен
+    var result = 0;
+    for (final entry in map.entries) {
+      result ^= Object.hash(itemHash(entry.key), itemHash(entry.value));
+    }
+    return Object.hash(Map, result);
+  }
+
+  static int iterableHash(Iterable<dynamic> iterable) {
+    var result = 0;
+    for (final item in iterable) {
+      result = Object.hash(result, itemHash(item));
+    }
+    return Object.hash(Iterable, result);
+  }
+
+  static int itemHash(dynamic item) {
+    if (item is Object) return hash(item);
+    return item.hashCode;
+  }
 }
