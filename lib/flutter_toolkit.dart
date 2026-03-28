@@ -66,3 +66,4 @@ export 'package:flutter_toolkit/extensions/text_editing_controller_extension.dar
 export 'package:flutter_toolkit/extensions/paginated_map_extension.dart';
 export 'package:flutter_toolkit/utils/flexible_equality.dart';
 export 'package:flutter_toolkit/core/models/updatable.dart';
+export 'package:flutter_toolkit/core/models/weekday.dart';
