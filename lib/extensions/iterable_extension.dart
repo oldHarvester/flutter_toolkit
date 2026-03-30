@@ -67,6 +67,21 @@ extension IterableExtension<T> on Iterable<T> {
     return map;
   }
 
+  Map<Key, T> toMap<Key>({
+    required Key Function(T value) resolveKey,
+  }) {
+    return Map.fromEntries(
+      map(
+        (value) {
+          return MapEntry(
+            resolveKey(value),
+            value,
+          );
+        },
+      ),
+    );
+  }
+
   Map<int, T> toIndexedMap() {
     final keys = Iterable.generate(
       length,
