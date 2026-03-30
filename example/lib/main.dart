@@ -12,7 +12,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(<int, String>{1: 'Some 1', 2: 'Some 2'}.difference(<int, String>{1: 'Some 2'}));
+    print(
+      <int, String>{
+        1: 'Some 1',
+        2: 'Some 2',
+      }.union(
+        <int, String>{
+          1: 'Some 2',
+        },
+      ),
+    );
     return MaterialApp(
       home: UiKitExample(),
     );
