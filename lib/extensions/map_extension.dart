@@ -69,7 +69,7 @@ extension MapExtension<T, Z> on Map<T, Z> {
         temp[key] = otherValue;
       }
     }
-    
+
     return temp;
   }
 
