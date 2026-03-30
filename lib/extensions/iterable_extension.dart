@@ -1,3 +1,36 @@
+import 'package:equatable/equatable.dart';
+import 'package:flutter_toolkit/utils/flexible_equality.dart';
+
+class IterableDifference<T> with EquatableMixin {
+  const IterableDifference({
+    required this.indexedAdded,
+    required this.indexedEdited,
+    required this.indexedRemoved,
+  });
+
+  final Map<int, T> indexedAdded;
+  final Map<int, T> indexedRemoved;
+  final Map<int, T> indexedEdited;
+
+  Iterable<T> get added => indexedAdded.values;
+
+  Iterable<T> get removed => indexedRemoved.values;
+
+  Iterable<T> get edited => indexedEdited.values;
+
+  @override
+  String toString() {
+    return '\n$runtimeType\nadded: $indexedAdded\nremoved: $indexedRemoved\nedited: $indexedEdited';
+  }
+
+  @override
+  List<Object?> get props => [
+        FlexibleEquality().hash(indexedAdded),
+        FlexibleEquality().hash(indexedRemoved),
+        FlexibleEquality().hash(indexedEdited),
+      ];
+}
+
 extension IterableExtension<T> on Iterable<T> {
   T? itemAtOrNull(int index) {
     try {
@@ -59,12 +92,53 @@ extension IterableExtension<T> on Iterable<T> {
     return skip(startIndex).take(limit);
   }
 
-  Map<Key, T> toKeyValuePair<Key>(Key Function(T value) resolveKey) {
-    final map = <Key, T>{};
-    for (final element in this) {
-      map[resolveKey(element)] = element;
+  IterableDifference<T> calculateDifference<Key>(
+    Iterable<T> other, {
+    required Key Function(T value) resolveKey,
+    bool Function(T a, T b)? compare,
+  }) {
+    final oldList = toList();
+    final newList = other.toList();
+    final equals = compare ?? (T a, T b) => a == b;
+
+    // key -> (index, value) для быстрого поиска
+    final oldMap = <Key, (int index, T value)>{};
+    for (var i = 0; i < oldList.length; i++) {
+      oldMap[resolveKey(oldList[i])] = (i, oldList[i]);
     }
-    return map;
+
+    final newMap = <Key, (int index, T value)>{};
+    for (var i = 0; i < newList.length; i++) {
+      newMap[resolveKey(newList[i])] = (i, newList[i]);
+    }
+
+    final added = <int, T>{};
+    final removed = <int, T>{};
+    final edited = <int, T>{};
+
+    // Проход по new: если ключ отсутствует в old — added,
+    // если присутствует но compare false — edited
+    for (final entry in newMap.entries) {
+      final oldEntry = oldMap[entry.key];
+      if (oldEntry == null) {
+        added[entry.value.$1] = entry.value.$2;
+      } else if (!equals(oldEntry.$2, entry.value.$2)) {
+        edited[entry.value.$1] = entry.value.$2;
+      }
+    }
+
+    // Проход по old: если ключ отсутствует в new — removed
+    for (final entry in oldMap.entries) {
+      if (!newMap.containsKey(entry.key)) {
+        removed[entry.value.$1] = entry.value.$2;
+      }
+    }
+
+    return IterableDifference<T>(
+      indexedAdded: added,
+      indexedRemoved: removed,
+      indexedEdited: edited,
+    );
   }
 
   Map<Key, T> toMap<Key>({
