@@ -13,12 +13,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print(
-      <int, String>{
+      <int, String?>{
         1: 'Some 1',
         2: 'Some 2',
+        3: null,
       }.union(
-        <int, String>{
+        <int, String?>{
           1: 'Some 2',
+          3: ''
         },
       ),
     );
