@@ -1,6 +1,10 @@
 class FlexibleEquality {
   const FlexibleEquality();
 
+  bool notEquals(Object? a, Object? b) {
+    return !equals(a, b);
+  }
+
   bool equals(Object? a, Object? b) {
     if (!(a != null && b != null)) return false;
     if (identical(a, b)) return true;
