@@ -1,5 +1,7 @@
-abstract final class FlexibleEquality {
-  static bool equals(Object? a, Object? b) {
+class FlexibleEquality {
+  const FlexibleEquality();
+
+  bool equals(Object? a, Object? b) {
     if (!(a != null && b != null)) return false;
     if (identical(a, b)) return true;
     if (a.runtimeType != b.runtimeType) return false;
@@ -14,7 +16,7 @@ abstract final class FlexibleEquality {
     };
   }
 
-  static bool listsEquals(List<dynamic> a, List<dynamic> b) {
+  bool listsEquals(List<dynamic> a, List<dynamic> b) {
     if (a.length != b.length) return false;
     for (int i = 0; i < a.length; i++) {
       if (!itemEquals(a[i], b[i])) return false;
@@ -22,7 +24,7 @@ abstract final class FlexibleEquality {
     return true;
   }
 
-  static bool setsEquals(Set<dynamic> a, Set<dynamic> b) {
+  bool setsEquals(Set<dynamic> a, Set<dynamic> b) {
     if (a.length != b.length) return false;
     for (final itemA in a) {
       final match = b.any((itemB) => itemEquals(itemA, itemB));
@@ -31,7 +33,7 @@ abstract final class FlexibleEquality {
     return true;
   }
 
-  static bool mapsEquals(Map<dynamic, dynamic> a, Map<dynamic, dynamic> b) {
+  bool mapsEquals(Map<dynamic, dynamic> a, Map<dynamic, dynamic> b) {
     if (a.length != b.length) return false;
     for (final key in a.keys) {
       if (!b.containsKey(key)) return false;
@@ -40,7 +42,7 @@ abstract final class FlexibleEquality {
     return true;
   }
 
-  static bool iterablesEquals(Iterable<dynamic> a, Iterable<dynamic> b) {
+  bool iterablesEquals(Iterable<dynamic> a, Iterable<dynamic> b) {
     final iterA = a.iterator;
     final iterB = b.iterator;
     while (true) {
@@ -52,12 +54,12 @@ abstract final class FlexibleEquality {
     }
   }
 
-  static bool itemEquals(dynamic a, dynamic b) {
+  bool itemEquals(dynamic a, dynamic b) {
     if (a is Object && b is Object) return equals(a, b);
     return a == b;
   }
 
-  static int hash(Object? obj) {
+  int hash(Object? obj) {
     if (obj == null) return null.hashCode;
 
     return switch (obj) {
@@ -69,7 +71,7 @@ abstract final class FlexibleEquality {
     };
   }
 
-  static int listHash(List<dynamic> list) {
+  int listHash(List<dynamic> list) {
     var result = 0;
     for (final item in list) {
       result = Object.hash(result, itemHash(item));
@@ -77,7 +79,7 @@ abstract final class FlexibleEquality {
     return Object.hash(List, result);
   }
 
-  static int setHash(Set<dynamic> set) {
+  int setHash(Set<dynamic> set) {
     // XOR — порядок не важен, как и в setsEquals
     var result = 0;
     for (final item in set) {
@@ -86,7 +88,7 @@ abstract final class FlexibleEquality {
     return Object.hash(Set, result);
   }
 
-  static int mapHash(Map<dynamic, dynamic> map) {
+  int mapHash(Map<dynamic, dynamic> map) {
     // XOR пар ключ+значение — порядок ключей не важен
     var result = 0;
     for (final entry in map.entries) {
@@ -95,7 +97,7 @@ abstract final class FlexibleEquality {
     return Object.hash(Map, result);
   }
 
-  static int iterableHash(Iterable<dynamic> iterable) {
+  int iterableHash(Iterable<dynamic> iterable) {
     var result = 0;
     for (final item in iterable) {
       result = Object.hash(result, itemHash(item));
@@ -103,7 +105,7 @@ abstract final class FlexibleEquality {
     return Object.hash(Iterable, result);
   }
 
-  static int itemHash(dynamic item) {
+  int itemHash(dynamic item) {
     if (item is Object) return hash(item);
     return item.hashCode;
   }

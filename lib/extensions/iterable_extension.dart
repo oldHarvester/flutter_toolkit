@@ -58,4 +58,12 @@ extension IterableExtension<T> on Iterable<T> {
     final startIndex = page * limit;
     return skip(startIndex).take(limit);
   }
+
+  Map<Key, T> toKeyValuePair<Key>(Key Function(T value) resolveKey) {
+    final map = <Key, T>{};
+    for (final element in this) {
+      map[resolveKey(element)] = element;
+    }
+    return map;
+  }
 }
