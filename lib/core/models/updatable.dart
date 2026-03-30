@@ -6,5 +6,5 @@ class Updatable<T> with EquatableMixin {
   final T value;
 
   @override
-  List<Object?> get props => [FlexibleEquality.hash(value)];
+  List<Object?> get props => [FlexibleEquality().hash(value)];
 }
