@@ -18,6 +18,8 @@ typedef ThrottleCollectionHandler<T> = void Function(List<T> data);
 
 typedef ThrottleCollectionEqualityHandler<T> = bool Function(T a, T b);
 
+typedef ThrottleCollectionSkipHandler<T> = bool Function(T value);
+
 /// Will clear itself automatically depending on `ThrottleCollectorType`
 class ThrottleCollection<T> {
   ThrottleCollection({
@@ -26,6 +28,7 @@ class ThrottleCollection<T> {
     this.unique = false,
     required this.handler,
     this.equalityHandler,
+    this.skipHandler,
     this.throttleDuration = const Duration(milliseconds: 300),
   }) : _enabled = enabled;
 
@@ -34,6 +37,8 @@ class ThrottleCollection<T> {
   final ThrottleCollectionHandler<T> handler;
 
   final ThrottleCollectionEqualityHandler<T>? equalityHandler;
+
+  final ThrottleCollectionSkipHandler<T>? skipHandler;
 
   final Duration throttleDuration;
 
@@ -90,6 +95,11 @@ class ThrottleCollection<T> {
 
   void add(T object) {
     if (!enabled) return;
+    final skipHandler = this.skipHandler ?? (value) {
+      return false;
+    };
+    final skip = skipHandler(object);
+    if (skip) return;
     final oldCompleter = _frameCompleter;
     switch (type) {
       case ThrottleCollectorType.frame:
