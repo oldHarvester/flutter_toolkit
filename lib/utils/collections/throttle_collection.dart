@@ -43,7 +43,9 @@ class ThrottleCollection<T> {
 
   bool _enabled;
 
-  bool get enabled => _enabled;
+  bool _disposed = false;
+
+  bool get enabled => !_disposed && _enabled;
 
   FlexibleCompleter<void>? _frameCompleter;
 
@@ -54,6 +56,11 @@ class ThrottleCollection<T> {
   void disable() {
     _enabled = false;
     _cancelFrame();
+  }
+
+  void dispose() {
+    _disposed = true;
+    disable();
   }
 
   void _cancelFrame() {
