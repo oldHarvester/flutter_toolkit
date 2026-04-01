@@ -29,6 +29,7 @@ class ThrottleLogger {
     bool showLogs = true,
     this.type = ThrottleLoggerType.throttle,
     this.unique = true,
+    this.showDividers = true,
     this.throttleDuration = const Duration(milliseconds: 300),
   }) : _showLogs = showLogs;
 
@@ -41,6 +42,8 @@ class ThrottleLogger {
   late bool _showLogs;
 
   final bool unique;
+
+  final bool showDividers;
 
   final List<_ThrottleMessage> _messages = [];
 
@@ -65,12 +68,25 @@ class ThrottleLogger {
     dev.log(message.message, name: message.owner);
   }
 
+  void _logDivider() {
+    if (showDividers) {
+      dev.log('==========', name: owner);
+    }
+  }
+
   void _onComplete() {
     final messages = {..._messages}.toList();
     _messages.clear();
+    final showDividers = messages.isNotEmpty && this.showDividers;
+    if (showDividers) {
+      _logDivider();
+    }
     while (messages.isNotEmpty) {
       final message = messages.removeAt(0);
       _logMessage(message);
+    }
+    if (showDividers) {
+      _logDivider();
     }
   }
 
