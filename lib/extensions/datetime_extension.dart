@@ -5,6 +5,12 @@ extension DateTimeExtension on DateTime {
 
   DateTime get withoutTime => DateTime(year, month, day);
 
+  Duration get toDuration => Duration(
+        microseconds: microsecondsSinceEpoch,
+      );
+
+  Duration get time => subtract(withoutTime.toDuration).toDuration;
+
   int get age {
     final today = DateTime.now();
     int age = today.year - year;
