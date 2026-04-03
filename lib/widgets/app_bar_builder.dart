@@ -20,8 +20,10 @@ class AppBarBuilder extends StatelessWidget {
     this.trailingSeparator,
     this.alignment = Alignment.center,
     this.padding = EdgeInsets.zero,
+    this.fixedHeight,
   });
 
+  final double? fixedHeight;
   final EdgeInsetsGeometry padding;
   final List<FixedExtentWidgetBuilderMixin> trailingActions;
   final List<FixedExtentWidgetBuilderMixin> leadingActions;
@@ -93,35 +95,38 @@ class AppBarBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: padding,
-      child: Row(
-        children: [
-          SizedBox(
-            width: occupyExtent,
-            child: _buildActions(
-              separator: leadingSeparator,
-              mainAxisAlignment: MainAxisAlignment.start,
-              context: context,
-              actions: leadingActions,
+    return SizedBox(
+      height: fixedHeight,
+      child: Padding(
+        padding: padding,
+        child: Row(
+          children: [
+            SizedBox(
+              width: occupyExtent,
+              child: _buildActions(
+                separator: leadingSeparator,
+                mainAxisAlignment: MainAxisAlignment.start,
+                context: context,
+                actions: leadingActions,
+              ),
             ),
-          ),
-          Expanded(
-            child: Align(
-              alignment: alignment,
-              child: content,
+            Expanded(
+              child: Align(
+                alignment: alignment,
+                child: content,
+              ),
             ),
-          ),
-          SizedBox(
-            width: occupyExtent,
-            child: _buildActions(
-              separator: trailingSeparator,
-              mainAxisAlignment: MainAxisAlignment.end,
-              context: context,
-              actions: trailingActions,
+            SizedBox(
+              width: occupyExtent,
+              child: _buildActions(
+                separator: trailingSeparator,
+                mainAxisAlignment: MainAxisAlignment.end,
+                context: context,
+                actions: trailingActions,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
