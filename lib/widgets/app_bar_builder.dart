@@ -20,6 +20,7 @@ class AppBarBuilder extends StatelessWidget {
     this.trailingSeparator,
     this.alignment = Alignment.center,
     this.padding = EdgeInsets.zero,
+    this.contentSpacing = 8.0,
     this.fixedHeight,
   });
 
@@ -30,6 +31,7 @@ class AppBarBuilder extends StatelessWidget {
   final FixedExtentWidgetBuilderMixin? trailingSeparator;
   final FixedExtentWidgetBuilderMixin? leadingSeparator;
   final Alignment alignment;
+  final double contentSpacing;
   final Widget content;
 
   double trailingTotalExtent(BuildContext context) =>
@@ -102,6 +104,7 @@ class AppBarBuilder extends StatelessWidget {
       child: Padding(
         padding: padding,
         child: Row(
+          spacing: contentSpacing,
           children: [
             SizedBox(
               width: occupyExtent,
