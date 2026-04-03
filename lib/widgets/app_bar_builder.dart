@@ -5,12 +5,12 @@ import 'package:flutter_toolkit/extensions/list_extension.dart';
 import 'package:flutter_toolkit/utils/size_extent_util.dart';
 
 mixin FixedExtentWidgetBuilderMixin {
-  double resolveExtent(BuildContext context);
+  double resolveExtent();
 
   Widget resolveBuild(BuildContext context);
 }
 
-class AppBarBuilder extends StatelessWidget {
+class AppBarBuilder extends StatelessWidget implements PreferredSizeWidget {
   const AppBarBuilder({
     super.key,
     required this.content,
@@ -21,37 +21,41 @@ class AppBarBuilder extends StatelessWidget {
     this.alignment = Alignment.center,
     this.padding = EdgeInsets.zero,
     this.contentSpacing = 8.0,
-    this.fixedHeight,
+    this.height = 40,
+    this.bottom,
   });
 
-  final double? fixedHeight;
+  final double height;
   final EdgeInsetsGeometry padding;
   final List<FixedExtentWidgetBuilderMixin> trailingActions;
   final List<FixedExtentWidgetBuilderMixin> leadingActions;
   final FixedExtentWidgetBuilderMixin? trailingSeparator;
   final FixedExtentWidgetBuilderMixin? leadingSeparator;
+  final FixedExtentWidgetBuilderMixin? bottom;
   final Alignment alignment;
   final double contentSpacing;
   final Widget content;
 
-  double trailingTotalExtent(BuildContext context) =>
-      calculateExtent(context, trailingActions, trailingSeparator);
+  double get totalHeight =>
+      height + (bottom == null ? 0 : bottom!.resolveExtent());
 
-  double leadingTotalExtent(BuildContext context) =>
-      calculateExtent(context, leadingActions, leadingSeparator);
+  double get trailingTotalExtent =>
+      calculateExtent(trailingActions, trailingSeparator);
 
-  double occupyExtent(BuildContext context) => math.max(trailingTotalExtent(context), leadingTotalExtent(context));
+  double get leadingTotalExtent =>
+      calculateExtent(leadingActions, leadingSeparator);
+
+  double get occupyExtent => math.max(trailingTotalExtent, leadingTotalExtent);
 
   double calculateExtent(
-    BuildContext context,
     List<FixedExtentWidgetBuilderMixin> actions,
     FixedExtentWidgetBuilderMixin? separator,
   ) {
     return SizeExtentUtil.calculateTotalSpace(
       padding: EdgeInsets.zero,
-      itemSize: (index) => actions.elementAt(index).resolveExtent(context),
+      itemSize: (index) => actions.elementAt(index).resolveExtent(),
       itemCount: actions.length,
-      spacing: separator?.resolveExtent(context),
+      spacing: separator?.resolveExtent(),
       axis: Axis.horizontal,
     );
   }
@@ -61,7 +65,7 @@ class AppBarBuilder extends StatelessWidget {
     required FixedExtentWidgetBuilderMixin builder,
   }) {
     return SizedBox(
-      width: builder.resolveExtent(context),
+      width: builder.resolveExtent(),
       child: builder.resolveBuild(context),
     );
   }
@@ -98,41 +102,57 @@ class AppBarBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final occupyExtent = this.occupyExtent(context);
+    final bottom = this.bottom;
     return SizedBox(
-      height: fixedHeight,
-      child: Padding(
-        padding: padding,
-        child: Row(
-          spacing: contentSpacing,
-          children: [
+      height: totalHeight,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Expanded(
+            child: Padding(
+              padding: padding,
+              child: Row(
+                spacing: contentSpacing,
+                children: [
+                  SizedBox(
+                    width: occupyExtent,
+                    child: _buildActions(
+                      separator: leadingSeparator,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      context: context,
+                      actions: leadingActions,
+                    ),
+                  ),
+                  Expanded(
+                    child: Align(
+                      alignment: alignment,
+                      child: content,
+                    ),
+                  ),
+                  SizedBox(
+                    width: occupyExtent,
+                    child: _buildActions(
+                      separator: trailingSeparator,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      context: context,
+                      actions: trailingActions,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          if (bottom != null)
             SizedBox(
-              width: occupyExtent,
-              child: _buildActions(
-                separator: leadingSeparator,
-                mainAxisAlignment: MainAxisAlignment.start,
-                context: context,
-                actions: leadingActions,
-              ),
+              height: bottom.resolveExtent(),
+              child: bottom.resolveBuild(context),
             ),
-            Expanded(
-              child: Align(
-                alignment: alignment,
-                child: content,
-              ),
-            ),
-            SizedBox(
-              width: occupyExtent,
-              child: _buildActions(
-                separator: trailingSeparator,
-                mainAxisAlignment: MainAxisAlignment.end,
-                context: context,
-                actions: trailingActions,
-              ),
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }
+
+  @override
+  Size get preferredSize => Size.fromHeight(totalHeight);
 }
