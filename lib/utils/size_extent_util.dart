@@ -21,4 +21,26 @@ abstract final class SizeExtentUtil {
 
     return usableSpace / count;
   }
+
+  static double calculateTotalSpace({
+    required EdgeInsets padding,
+    required double Function(int index) itemSize,
+    required int itemCount,
+    required double? spacing,
+    required Axis axis,
+  }) {
+    final paddingSize =
+        axis == Axis.horizontal ? padding.horizontal : padding.vertical;
+
+    if (itemCount == 0) return paddingSize;
+
+    double totalItems = 0;
+    for (int i = 0; i < itemCount; i++) {
+      totalItems += itemSize(i);
+    }
+
+    final totalSpacing = (spacing ?? 0) * (itemCount - 1);
+
+    return paddingSize + totalItems + totalSpacing;
+  }
 }
