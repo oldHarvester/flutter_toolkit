@@ -5,7 +5,7 @@ import 'package:flutter_toolkit/extensions/list_extension.dart';
 import 'package:flutter_toolkit/utils/size_extent_util.dart';
 
 mixin FixedExtentWidgetBuilderMixin {
-  double get extent;
+  double resolveExtent(BuildContext context);
 
   Widget resolveBuild(BuildContext context);
 }
@@ -32,23 +32,24 @@ class AppBarBuilder extends StatelessWidget {
   final Alignment alignment;
   final Widget content;
 
-  double get trailingTotalExtent =>
-      calculateExtent(trailingActions, trailingSeparator);
+  double trailingTotalExtent(BuildContext context) =>
+      calculateExtent(context, trailingActions, trailingSeparator);
 
-  double get leadingTotalExtent =>
-      calculateExtent(leadingActions, leadingSeparator);
+  double leadingTotalExtent(BuildContext context) =>
+      calculateExtent(context, leadingActions, leadingSeparator);
 
-  double get occupyExtent => math.max(trailingTotalExtent, leadingTotalExtent);
+  double occupyExtent(BuildContext context) => math.max(trailingTotalExtent(context), leadingTotalExtent(context));
 
   double calculateExtent(
+    BuildContext context,
     List<FixedExtentWidgetBuilderMixin> actions,
     FixedExtentWidgetBuilderMixin? separator,
   ) {
     return SizeExtentUtil.calculateTotalSpace(
       padding: EdgeInsets.zero,
-      itemSize: (index) => actions.elementAt(index).extent,
+      itemSize: (index) => actions.elementAt(index).resolveExtent(context),
       itemCount: actions.length,
-      spacing: separator?.extent,
+      spacing: separator?.resolveExtent(context),
       axis: Axis.horizontal,
     );
   }
@@ -58,7 +59,7 @@ class AppBarBuilder extends StatelessWidget {
     required FixedExtentWidgetBuilderMixin builder,
   }) {
     return SizedBox(
-      width: builder.extent,
+      width: builder.resolveExtent(context),
       child: builder.resolveBuild(context),
     );
   }
@@ -95,6 +96,7 @@ class AppBarBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final occupyExtent = this.occupyExtent(context);
     return SizedBox(
       height: fixedHeight,
       child: Padding(
