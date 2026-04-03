@@ -7,7 +7,7 @@ import 'package:flutter_toolkit/utils/size_extent_util.dart';
 mixin FixedExtentWidgetBuilderMixin {
   double get extent;
 
-  Widget builder(BuildContext context);
+  Widget resolveBuild(BuildContext context);
 }
 
 class AppBarBuilder extends StatelessWidget {
@@ -57,7 +57,7 @@ class AppBarBuilder extends StatelessWidget {
   }) {
     return SizedBox(
       width: builder.extent,
-      child: builder.builder(context),
+      child: builder.resolveBuild(context),
     );
   }
 
