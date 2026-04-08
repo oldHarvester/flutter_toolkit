@@ -29,7 +29,7 @@ class InfiniteTaskExecutor<T> {
 
   bool _disposed = false;
 
-  bool _started = true;
+  bool _started = false;
 
   Duration _elapsedTime = Duration.zero;
 
