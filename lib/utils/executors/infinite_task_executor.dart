@@ -31,11 +31,15 @@ class InfiniteTaskExecutor<T> {
 
   bool _started = false;
 
+  bool _stopped = true;
+
   Duration _elapsedTime = Duration.zero;
 
   Duration get elapsedTime => _elapsedTime;
 
   bool get started => _started;
+
+  bool get stopped => _stopped;
 
   bool get disposed => _disposed;
 
@@ -63,6 +67,7 @@ class InfiniteTaskExecutor<T> {
       return;
     }
     _started = true;
+    _stopped = false;
     _elapsedTime = Duration.zero;
     _timer ??= Timer(
       waitDuration,
@@ -73,9 +78,9 @@ class InfiniteTaskExecutor<T> {
   }
 
   Future<void> _startInfinite() async {
-    if (disposed) return;
+    if (disposed || stopped) return;
     await _execute();
-    if (disposed) return;
+    if (disposed || stopped) return;
     _timer = Timer(
       interval,
       () {
@@ -88,10 +93,12 @@ class InfiniteTaskExecutor<T> {
   void stop() {
     _timer?.cancel();
     _timer = null;
+    _started = false;
+    _stopped = true;
   }
 
   void dispose() {
-    _disposed = true;
     stop();
+    _disposed = true;
   }
 }
