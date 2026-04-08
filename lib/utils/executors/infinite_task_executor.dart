@@ -1,97 +1,97 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_toolkit/flutter_toolkit.dart';
 
-typedef Action<T> = FutureOr<T> Function();
+typedef InfiniteTaskAction<T> = FutureOr<T> Function();
 
 class InfiniteTaskExecutor<T> {
   InfiniteTaskExecutor({
-    this.duration = const Duration(seconds: 1),
-    Action<T>? action,
+    required this.action,
+    this.waitDuration = Duration.zero,
+    this.interval = const Duration(seconds: 1),
     this.onResult,
-  }) : _action = action;
-
-  final Duration duration;
-  final ValueChanged<OperationResult<T>>? onResult;
-  final ThrottleExecutor _executor = ThrottleExecutor();
-
-  Action<T>? _action;
-
-  bool _paused = true;
-
-  bool _disabled = false;
-
-  bool get paused => _paused;
-
-  bool get active => !paused;
-
-  bool get disabled => _disabled;
-
-  bool stop() {
-    if (disabled) {
-      return false;
-    }
-    _paused = true;
-    _executor.stop();
-    return true;
-  }
-
-  bool setAction({required Action<T> action}) {
-    if (disabled) {
-      return false;
-    }
-    _action = action;
-    return true;
-  }
-
-  bool execute({Action<T>? action}) {
-    if (disabled) {
-      return false;
-    }
-    if (action != null) {
-      setAction(action: action);
-    }
-    return _execute();
-  }
-
-  bool toggle({Action<T>? action}) {
-    if (disabled) {
-      return false;
-    }
-    if (action != null) {
-      setAction(action: action);
-    }
-    if (_paused) {
-      return execute(action: action);
-    } else {
-      return stop();
+    this.onError,
+    this.onSuccess,
+    this.autoStart = true,
+  }) {
+    if (autoStart) {
+      start();
     }
   }
 
-  bool _execute() {
-    if (_action == null) {
-      return false;
-    }
-    _paused = false;
-    _executor.execute(
-      duration: duration,
-      onAction: () async {
-        final operationResult = await _action?.call().safeExecute();
-        if (!active && !disabled) {
-          if (operationResult != null) {
-            onResult?.call(operationResult);
-          }
-          _execute();
-        }
+  final bool autoStart;
+  final Duration interval;
+  final Duration waitDuration;
+  final InfiniteTaskAction<T> action;
+  final void Function(OperationResult<T> result)? onResult;
+  final void Function(T value)? onSuccess;
+  final void Function(Object error, StackTrace stackTrace)? onError;
+
+  bool _disposed = false;
+
+  bool _started = true;
+
+  Duration _elapsedTime = Duration.zero;
+
+  Duration get elapsedTime => _elapsedTime;
+
+  bool get started => _started;
+
+  bool get disposed => _disposed;
+
+  Timer? _timer;
+
+  Future<OperationResult<T>> _execute() async {
+    final result = await action().safeExecute();
+    onResult?.call(result);
+    result.when(
+      onSuccess: (result) {
+        onSuccess?.call(result);
+      },
+      onError: (error, stackTrace) {
+        onError?.call(error, stackTrace);
       },
     );
-    return true;
+    if (!_disposed) {
+      _elapsedTime += result.elapsedTime;
+    }
+    return result;
   }
 
-  void disable() {
-    _disabled = true;
-    _paused = true;
-    _executor.stop();
+  void start() {
+    if (_started || disposed) {
+      return;
+    }
+    _started = true;
+    _elapsedTime = Duration.zero;
+    _timer ??= Timer(
+      waitDuration,
+      () async {
+        _startInfinite();
+      },
+    );
+  }
+
+  Future<void> _startInfinite() async {
+    if (disposed) return;
+    await _execute();
+    if (disposed) return;
+    _timer = Timer(
+      interval,
+      () {
+        _elapsedTime += interval;
+        _startInfinite();
+      },
+    );
+  }
+
+  void stop() {
+    _timer?.cancel();
+    _timer = null;
+  }
+
+  void dispose() {
+    _disposed = true;
+    stop();
   }
 }

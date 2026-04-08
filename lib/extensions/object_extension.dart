@@ -10,12 +10,20 @@ extension ObjectExtension<Z extends Object> on Z {
   }
 
   OperationResult<Z> safeExecute() {
+    final stopWatch = Stopwatch()..start();
     try {
-      return OperationResult.success(this);
+      final result = this;
+      stopWatch.stop();
+      return OperationResult.success(
+        result,
+        elapsedTime: stopWatch.elapsed,
+      );
     } catch (e, stk) {
+      stopWatch.stop();
       return OperationResult.failed(
         error: e,
         stackTrace: stk,
+        elapsedTime: stopWatch.elapsed,
       );
     }
   }

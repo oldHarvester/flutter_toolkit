@@ -1,3 +1,5 @@
+import 'package:equatable/equatable.dart';
+
 extension OperationResultExtension<T> on OperationResult<T> {
   T? get result {
     return when(
@@ -44,12 +46,20 @@ extension OperationResultExtension<T> on OperationResult<T> {
   }
 }
 
-sealed class OperationResult<T> {
-  const OperationResult();
+sealed class OperationResult<T> with EquatableMixin {
+  const OperationResult({
+    required this.elapsedTime,
+  });
 
-  const factory OperationResult.success(T result) = OperationSuccessResult;
+  final Duration elapsedTime;
+
+  const factory OperationResult.success(
+    T result, {
+    required Duration elapsedTime,
+  }) = OperationSuccessResult;
 
   const factory OperationResult.failed({
+    required Duration elapsedTime,
     required Object error,
     required StackTrace stackTrace,
   }) = OperationFailedResult;
@@ -77,35 +87,33 @@ sealed class OperationResult<T> {
       },
     );
   }
+
+  @override
+  List<Object?> get props => [elapsedTime];
 }
 
 class OperationSuccessResult<T> extends OperationResult<T> {
-  const OperationSuccessResult(this.result);
+  const OperationSuccessResult(
+    this.result, {
+    required super.elapsedTime,
+  });
+
   final T result;
 
   @override
-  int get hashCode => Object.hashAll([result]);
-
-  @override
-  bool operator ==(covariant OperationSuccessResult<T> other) {
-    return result == other.result;
-  }
+  List<Object?> get props => [...super.props, result];
 }
 
 class OperationFailedResult<T> extends OperationResult<T> {
   const OperationFailedResult({
     required this.error,
     required this.stackTrace,
+    required super.elapsedTime,
   });
 
   final Object error;
   final StackTrace stackTrace;
 
   @override
-  int get hashCode => Object.hashAll([error, stackTrace]);
-
-  @override
-  bool operator ==(covariant OperationFailedResult<T> other) {
-    return error == other.error && stackTrace == other.stackTrace;
-  }
+  List<Object?> get props => [...super.props, error, stackTrace];
 }
