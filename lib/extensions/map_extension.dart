@@ -167,4 +167,12 @@ extension MapExtension<T, Z> on Map<T, Z> {
 
     return temp;
   }
+
+  void removeNullableValues() {
+    return removeWhere(
+      (key, value) {
+        return value == null;
+      },
+    );
+  }
 }
