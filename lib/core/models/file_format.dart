@@ -10,7 +10,7 @@ import 'package:flutter_toolkit/extensions/uint8list_extension.dart';
 sealed class FileFormat with EquatableMixin {
   const FileFormat(
     this.format, [
-    this.mimeType = FileMimeType.empty,
+    this.mimeType = FileMimeType.emptyUnknown,
   ]);
 
   bool get isRasterImage {
@@ -163,7 +163,7 @@ class _UnknownFileExtension extends FileFormat {
 }
 
 class _EmptyUnknownFileExtension extends _UnknownFileExtension {
-  const _EmptyUnknownFileExtension() : super('', FileMimeType.empty);
+  const _EmptyUnknownFileExtension() : super('', FileMimeType.emptyUnknown);
 }
 
 class _PDFFileExtension extends FileFormat {
