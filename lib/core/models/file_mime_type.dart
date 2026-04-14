@@ -6,13 +6,16 @@ sealed class FileMimeType with EquatableMixin {
 
   const factory FileMimeType.unknown(String name) = UnknownFileMimeType;
 
-  factory FileMimeType.fromString(String name) {
+  static FileMimeType? fromStringOrNull(String name) {
     return values.firstWhereOrNull(
-          (element) {
-            return element.name == name;
-          },
-        ) ??
-        FileMimeType.unknown(name);
+      (element) {
+        return element.name == name;
+      },
+    );
+  }
+
+  factory FileMimeType.fromString(String name) {
+    return fromStringOrNull(name) ?? FileMimeType.unknown(name);
   }
 
   static const FileMimeType emptyUnknown = UnknownFileMimeType('');
