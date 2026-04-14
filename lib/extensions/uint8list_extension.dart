@@ -13,7 +13,7 @@ extension Uint8ListX on Uint8List {
       if (_isSVG) return FileFormat.svg;
       if (_isDOCX) return FileFormat.docx;
       if (_isDOC) return FileFormat.doc;
-      if (_isWebP) return FileFormat.webP;
+      if (_isWebP) return FileFormat.webp;
       if (_isBMP) return FileFormat.bmp;
       if (_isGIF) return FileFormat.gif;
       return FileFormat.emptyUnknown();
