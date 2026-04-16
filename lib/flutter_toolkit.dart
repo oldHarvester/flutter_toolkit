@@ -71,3 +71,4 @@ export 'package:flutter_toolkit/utils/generators/color_generator.dart';
 export 'package:flutter_toolkit/utils/loggers/throttle_logger.dart';
 export 'package:flutter_toolkit/utils/collections/throttle_collection.dart';
 export 'package:flutter_toolkit/widgets/app_bar_builder.dart';
+export 'package:flutter_toolkit/extensions/uri_extension.dart';
