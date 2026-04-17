@@ -8,7 +8,8 @@ extension UriExtension on Uri {
   String? get filename {
     final segments = pathSegments;
     if (segments.isEmpty) return null;
-    final last = segments.last;
+
+    final last = Uri.decodeFull(segments.last);
     final dot = last.lastIndexOf('.');
     if (dot == -1 || dot == 0 || dot == last.length - 1) return null;
     return last;
