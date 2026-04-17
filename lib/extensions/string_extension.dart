@@ -29,6 +29,22 @@ extension StringExtension on String {
     }
   }
 
+  String unwrap(Set<String> symbols) {
+    if (symbols.isEmpty || length < 2) {
+      return this;
+    }
+    for (final symbol in symbols) {
+      if (startsWith(symbol) && endsWith(symbol)) {
+        return substring(1, length - 1);
+      }
+    }
+    return this;
+  }
+
+  String unquote() {
+    return unwrap({'\'', '"'});
+  }
+
   String truncateString({
     int maxLength = 20,
     String ellipsis = '...',
