@@ -41,6 +41,18 @@ extension DateTimeExtension on DateTime {
     return isSameDay(tomorrow);
   }
 
+  bool get isDayUpcoming {
+    final today = DateTime.now().withoutTime;
+    final day = withoutTime;
+    return day.isAfter(today);
+  }
+
+  bool get isDayPast {
+    final today = DateTime.now().withoutTime;
+    final day = withoutTime;
+    return day.isBefore(today);
+  }
+
   bool isAfterOrSame(DateTime date) {
     return this == date || isAfter(date);
   }
