@@ -21,4 +21,23 @@ extension DateTimeExtension on DateTime {
 
     return age;
   }
+
+  bool get isToday {
+    final now = DateTime.now();
+    return isSameDay(now);
+  }
+
+  bool isSameDay(DateTime date) {
+    return year == date.year && month == date.month && day == date.day;
+  }
+
+  bool get isYesterday {
+    final yesterday = DateTime.now().subtract(const Duration(days: 1));
+    return isSameDay(yesterday);
+  }
+
+  bool get isTomorrow {
+    final tomorrow = DateTime.now().add(const Duration(days: 1));
+    return isSameDay(tomorrow);
+  }
 }
