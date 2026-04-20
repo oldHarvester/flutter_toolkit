@@ -40,4 +40,12 @@ extension DateTimeExtension on DateTime {
     final tomorrow = DateTime.now().add(const Duration(days: 1));
     return isSameDay(tomorrow);
   }
+
+  bool isAfterOrSame(DateTime date) {
+    return this == date || isAfter(date);
+  }
+
+  bool isBeforeOrSame(DateTime date) {
+    return this == date || isBefore(date);
+  }
 }
