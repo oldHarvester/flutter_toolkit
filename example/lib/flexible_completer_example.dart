@@ -14,7 +14,7 @@ class _FlexibleCompleterExampleState extends State<FlexibleCompleterExample> {
     final completer = FlexibleCompleter<bool>(
       onCancel: () {},
       onTimeout: () {},
-      onReceived: (value, cancelledResult) {},
+      onComplete: (value) {},
       // timeoutDuration: Duration.zero,
     );
     Future.delayed(Duration(seconds: 5), () {

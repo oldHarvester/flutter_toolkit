@@ -25,8 +25,9 @@ class FlexibleCompleter<T> {
     this.onCancel,
     this.timeoutDuration,
     this.onTimeout,
-    this.onReceived,
     bool synchronous = true,
+    this.onComplete,
+    this.onCompleteWithError,
   }) {
     _completer = synchronous ? Completer.sync() : Completer();
     _completer.future.ignore();
@@ -50,7 +51,9 @@ class FlexibleCompleter<T> {
 
   final void Function()? onTimeout;
 
-  final void Function(T value, bool cancelledResult)? onReceived;
+  final void Function(T? value)? onComplete;
+
+  final void Function(Object error, StackTrace stackTrace)? onCompleteWithError;
 
   final Duration? timeoutDuration;
 
@@ -77,6 +80,8 @@ class FlexibleCompleter<T> {
   bool get isSuccessfullyCompleted =>
       !isCancelled && !isCompetedWithError && isCompleted;
 
+  T? _value;
+
   Object? _error;
 
   StackTrace? _stackTrace;
@@ -87,14 +92,17 @@ class FlexibleCompleter<T> {
 
   Future<T> get future => _completer.future;
 
-  bool cancel([FutureOr<T>? value]) {
+  T? get value => _value;
+
+  bool cancel([T? value]) {
     if (isCompleted) {
       return false;
     }
+    _isCancelled = true;
     cancelTimeout();
     onCancel?.call();
     if (value != null) {
-      complete(value, true);
+      complete(value);
     } else {
       completeError(
         FlexibleCompleterException(
@@ -102,8 +110,6 @@ class FlexibleCompleter<T> {
         ),
       );
     }
-    _isCancelled = true;
-    _isCompleted = true;
     return true;
   }
 
@@ -111,15 +117,19 @@ class FlexibleCompleter<T> {
     return _timeoutExecutor.stop();
   }
 
-  bool complete([FutureOr<T>? value, bool cancelledResult = false]) {
+  bool complete([T? value]) {
     if (isCompleted) {
       return false;
     }
-    cancelTimeout();
-    _completer.complete(value);
-    _isCompleted = true;
-    if (value is T) {
-      onReceived?.call(value!, cancelledResult);
+    try {
+      cancelTimeout();
+      _completer.complete(value);
+      _isCompleted = true;
+      _value = value;
+      onComplete?.call(value);
+    } catch (e, stk) {
+      _completer.completeError(e, stk);
+      rethrow;
     }
     return true;
   }
