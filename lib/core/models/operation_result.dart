@@ -74,10 +74,10 @@ sealed class OperationResult<T> with EquatableMixin {
     };
   }
 
-  MapValue? map<MapValue>(
+  MapValue? map<MapValue>({
     MapValue? Function(T result)? onSuccess,
     MapValue? Function(Object error, StackTrace stackTrace)? onError,
-  ) {
+  }) {
     return when(
       onSuccess: (result) {
         return onSuccess?.call(result);
