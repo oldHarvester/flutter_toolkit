@@ -100,7 +100,6 @@ class FlexibleCompleter<T> {
     }
     _isCancelled = true;
     cancelTimeout();
-    onCancel?.call();
     if (value != null) {
       complete(value);
     } else {
@@ -110,6 +109,7 @@ class FlexibleCompleter<T> {
         ),
       );
     }
+    onCancel?.call();
     return true;
   }
 
@@ -122,9 +122,9 @@ class FlexibleCompleter<T> {
       return false;
     }
     try {
+      _isCompleted = true;
       cancelTimeout();
       _completer.complete(value);
-      _isCompleted = true;
       _value = value;
       onComplete?.call(value);
     } catch (e, stk) {
@@ -138,9 +138,9 @@ class FlexibleCompleter<T> {
     if (isCompleted) {
       return false;
     }
+    _isCompleted = true;
     cancelTimeout();
     _completer.completeError(error, stackTrace);
-    _isCompleted = true;
     _isCompetedWithError = true;
     _error = error;
     _stackTrace = stackTrace;
