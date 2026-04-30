@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_toolkit/flutter_toolkit.dart';
 
 class MonthYear with EquatableMixin {
   const MonthYear({
@@ -47,12 +48,35 @@ class MonthYear with EquatableMixin {
     return date.isAfter(lastMonth.lastDay);
   }
 
+  // Returns passed days of this month
+  NullableDateRange passedDays() {
+    if (isCurrent) {
+      return NullableDateRange(
+        fromDate: firstDay,
+        toDate: DateTime.now(),
+      ).sort();
+    } else {
+      return NullableDateRange();
+    }
+  }
+
+  NullableDateRange monthRange() {
+    return NullableDateRange(
+      fromDate: firstDay,
+      toDate: lastDay,
+    );
+  }
+
   bool isDateBefore(DateTime date) {
     return date.isBefore(nextMonth.firstDay);
   }
 
   bool hasDate(DateTime date) {
     return date.month == month && date.year == year;
+  }
+
+  bool get isCurrent {
+    return MonthYear.now() == this;
   }
 
   bool isAfter(MonthYear other) {
