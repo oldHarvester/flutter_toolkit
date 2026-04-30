@@ -62,7 +62,7 @@ class FlexibleTimer {
   late final CustomLogger _logger = CustomLogger(
     owner: debugLabel ?? runtimeType.toString(),
   );
-  FlexibleCompleter<void>? _completer;
+  FlexibleCompleter<bool>? _completer;
 
   TickInfo _tempTick = TickInfo.zero();
 
@@ -70,7 +70,7 @@ class FlexibleTimer {
 
   Duration get spendDuration => _spendDuration;
 
-  Future<void> oneTickStart(Duration tick, {VoidCallback? onComplete}) {
+  Future<bool> oneTickStart(Duration tick, {VoidCallback? onComplete}) {
     return start(
       totalDuration: tick,
       tickDuration: tick,
@@ -79,7 +79,7 @@ class FlexibleTimer {
     );
   }
 
-  Future<void> start({
+  Future<bool> start({
     Duration? from,
     required Duration totalDuration,
     required Duration tickDuration,
@@ -87,7 +87,7 @@ class FlexibleTimer {
     VoidCallback? onComplete,
   }) {
     stop();
-    final completer = FlexibleCompleter();
+    final completer = FlexibleCompleter<bool>();
     _completer = completer;
 
     Duration clamp(Duration duration) {
@@ -125,7 +125,7 @@ class FlexibleTimer {
               overrideTick: nextTickDuration,
             );
           } else {
-            _completeFuture();
+            _completeFuture(true);
             onComplete?.call();
           }
         },
@@ -137,12 +137,12 @@ class FlexibleTimer {
     return completer.future;
   }
 
-  void _completeFuture() {
-    _completer?.complete();
+  void _completeFuture(bool success) {
+    _completer?.complete(success);
   }
 
   void stop() {
-    _completeFuture();
+    _completeFuture(false);
     _executor.stop();
   }
 }
