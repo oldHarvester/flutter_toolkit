@@ -56,24 +56,29 @@ class FlexibleTimer {
     this.debugLabel,
   });
 
-  final ThrottleExecutor executor = ThrottleExecutor();
+  final ThrottleExecutor _executor = ThrottleExecutor();
   final bool debug;
   final String? debugLabel;
   late final CustomLogger _logger = CustomLogger(
     owner: debugLabel ?? runtimeType.toString(),
   );
+  FlexibleCompleter<void>? _completer;
 
   TickInfo _tempTick = TickInfo.zero();
 
   Duration get _spendDuration => _tempTick.spend;
 
-  void start({
+  Future<void> start({
     Duration? from,
     required Duration totalDuration,
     required Duration tickDuration,
     required void Function(TickInfo info)? onTick,
     VoidCallback? onComplete,
   }) {
+    stop();
+    final completer = FlexibleCompleter();
+    _completer = completer;
+
     Duration clamp(Duration duration) {
       return duration.clamp(
         min: Duration.zero,
@@ -91,9 +96,8 @@ class FlexibleTimer {
     );
 
     void startTick({Duration? overrideTick}) {
-      if (_tempTick.complete) return;
       final resultTick = overrideTick ?? tickDuration;
-      executor.execute(
+      _executor.execute(
         duration: resultTick,
         onAction: () {
           _tempTick = _tempTick.copyWith(
@@ -110,6 +114,7 @@ class FlexibleTimer {
               overrideTick: nextTickDuration,
             );
           } else {
+            _completeFuture();
             onComplete?.call();
           }
         },
@@ -117,9 +122,16 @@ class FlexibleTimer {
     }
 
     startTick();
+
+    return completer.future;
+  }
+
+  void _completeFuture() {
+    _completer?.complete();
   }
 
   void stop() {
-    executor.stop();
+    _completeFuture();
+    _executor.stop();
   }
 }
