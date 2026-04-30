@@ -68,6 +68,17 @@ class FlexibleTimer {
 
   Duration get _spendDuration => _tempTick.spend;
 
+  Duration get spendDuration => _spendDuration;
+
+  Future<void> oneTickStart(Duration tick, {VoidCallback? onComplete}) {
+    return start(
+      totalDuration: tick,
+      tickDuration: tick,
+      onTick: (info) {},
+      onComplete: onComplete,
+    );
+  }
+
   Future<void> start({
     Duration? from,
     required Duration totalDuration,
