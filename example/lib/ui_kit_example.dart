@@ -22,6 +22,14 @@ class _UiKitExampleState extends State<UiKitExample> {
                 value: true,
                 onChanged: (value) {},
               ),
+              ElevatedButton(
+                onPressed: () {
+                  FlexibleTimer().oneTickStart(
+                    Duration(seconds: 1),
+                  );
+                },
+                child: Text('Run timer'),
+              ),
             ],
           ),
         ),

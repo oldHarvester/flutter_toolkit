@@ -105,6 +105,7 @@ class FlexibleTimer {
       tick: tickDuration,
       didTick: tickDuration,
     );
+    
 
     void startTick({Duration? overrideTick}) {
       final resultTick = overrideTick ?? tickDuration;
