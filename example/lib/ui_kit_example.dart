@@ -24,8 +24,13 @@ class _UiKitExampleState extends State<UiKitExample> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  FlexibleTimer().oneTickStart(
-                    Duration(seconds: 1),
+                  // FlexibleTimer().oneTickStart(
+                  //   Duration(seconds: 1),
+                  // );
+                  FlexibleTimer().start(
+                    totalDuration: Duration(seconds: 10),
+                    tickDuration: Duration(seconds: 1),
+                    onTick: (info) {},
                   );
                 },
                 child: Text('Run timer'),

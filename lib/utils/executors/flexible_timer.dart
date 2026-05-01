@@ -6,7 +6,7 @@ class TickInfo with EquatableMixin {
   const TickInfo({
     required this.spend,
     required this.total,
-    required this.didTick,
+    required this.lastTick,
     required this.tick,
   });
 
@@ -14,21 +14,21 @@ class TickInfo with EquatableMixin {
       : spend = Duration.zero,
         total = Duration.zero,
         tick = Duration.zero,
-        didTick = Duration.zero;
+        lastTick = Duration.zero;
 
   final Duration total;
   final Duration spend;
-  final Duration didTick;
+  final Duration lastTick;
   final Duration tick;
 
   TickInfo copyWith({
     Duration? spend,
     Duration? total,
     Duration? tick,
-    Duration? didTick,
+    Duration? lastTick,
   }) {
     return TickInfo(
-      didTick: didTick ?? this.didTick,
+      lastTick: lastTick ?? this.lastTick,
       spend: spend ?? this.spend,
       tick: tick ?? this.tick,
       total: total ?? this.total,
@@ -39,15 +39,16 @@ class TickInfo with EquatableMixin {
 
   @override
   String toString() {
-    return 'max: ${total.hhmmss()}, done: ${left.hhmmss()}, %: $progress';
+    return 'max: ${total.hhmmss()}, done: ${spend.hhmmss()}, left: ${left.hhmmss()} %: $progress';
   }
 
+  /// From 0 to 1
   double get progress => (spend / total).clamp(0.0, 1.0);
 
-  bool get complete => progress == 1;
+  bool get complete => progress >= 1.0;
 
   @override
-  List<Object?> get props => [total, spend, left, didTick, tick];
+  List<Object?> get props => [total, spend, left, lastTick, tick];
 }
 
 class FlexibleTimer {
@@ -103,9 +104,8 @@ class FlexibleTimer {
       spend: initialSpend,
       total: totalDuration,
       tick: tickDuration,
-      didTick: tickDuration,
+      lastTick: tickDuration,
     );
-    
 
     void startTick({Duration? overrideTick}) {
       final resultTick = overrideTick ?? tickDuration;
@@ -114,7 +114,7 @@ class FlexibleTimer {
         onAction: () {
           _tempTick = _tempTick.copyWith(
             spend: clamp(_tempTick.spend + resultTick),
-            didTick: resultTick,
+            lastTick: resultTick,
           );
           final leftDuration = totalDuration - _spendDuration;
           final nextTickDuration =
