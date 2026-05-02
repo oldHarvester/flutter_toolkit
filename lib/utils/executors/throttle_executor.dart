@@ -31,9 +31,10 @@ class ThrottleExecutor<T> {
 
   bool stop() {
     final timer = _timer;
+    final wasActive = timer != null && timer.isActive;
     timer?.cancel();
     _timer = null;
-    return timer != null && timer.isActive;
+    return wasActive;
   }
 
   void execute({

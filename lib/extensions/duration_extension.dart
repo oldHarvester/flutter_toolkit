@@ -14,11 +14,11 @@ extension DurationExtension on Duration {
   int get remainingHours => inHours;
 
   int get remainingMinutes => inMinutes % 60;
-  
+
   int get remainingSeconds => inSeconds % 60;
-  
+
   int get remainingMilliseconds => inMilliseconds % 1000;
-  
+
   int get remainingMicroseconds => inMicroseconds % 1000;
 
   double operator /(Duration other) {

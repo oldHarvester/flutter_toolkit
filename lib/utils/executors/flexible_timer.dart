@@ -43,7 +43,8 @@ class TickInfo with EquatableMixin {
   }
 
   /// From 0 to 1
-  double get progress => (spend / total).clamp(0.0, 1.0);
+  double get progress =>
+      total == Duration.zero ? 1 : (spend / total).clamp(0.0, 1.0);
 
   bool get complete => progress >= 1.0;
 
@@ -53,7 +54,7 @@ class TickInfo with EquatableMixin {
 
 class FlexibleTimer {
   FlexibleTimer({
-    this.debug = kDebugMode,
+    this.debug = false,
     this.debugLabel,
   });
 
@@ -62,6 +63,7 @@ class FlexibleTimer {
   final String? debugLabel;
   late final CustomLogger _logger = CustomLogger(
     owner: debugLabel ?? runtimeType.toString(),
+    showLogs: debug,
   );
   FlexibleCompleter<bool>? _completer;
 
@@ -86,7 +88,7 @@ class FlexibleTimer {
     required Duration tickDuration,
     required void Function(TickInfo info)? onTick,
     VoidCallback? onComplete,
-  }) {
+  }) async {
     stop();
     final completer = FlexibleCompleter<bool>();
     _completer = completer;
@@ -112,6 +114,7 @@ class FlexibleTimer {
       _executor.execute(
         duration: resultTick,
         onAction: () {
+          if (_completer != completer || completer.isCompleted) return;
           _tempTick = _tempTick.copyWith(
             spend: clamp(_tempTick.spend + resultTick),
             lastTick: resultTick,
@@ -121,10 +124,8 @@ class FlexibleTimer {
               leftDuration < tickDuration ? leftDuration : tickDuration;
           _logger.log(_tempTick.toString());
           onTick?.call(_tempTick);
-          if (!_tempTick.complete) {
-            startTick(
-              overrideTick: nextTickDuration,
-            );
+          if (!_tempTick.complete && completer.canPerformAction(_completer)) {
+            startTick(overrideTick: nextTickDuration);
           } else {
             _completeFuture(true);
             onComplete?.call();
@@ -145,5 +146,6 @@ class FlexibleTimer {
   void stop() {
     _completeFuture(false);
     _executor.stop();
+    _tempTick = TickInfo.zero();
   }
 }
