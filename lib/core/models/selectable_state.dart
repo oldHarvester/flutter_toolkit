@@ -2,8 +2,8 @@ import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_toolkit/flutter_toolkit.dart';
 
-class SelectableState<Key, Value> with EquatableMixin {
-  const SelectableState({
+class SelectableState<Key, Value extends Object> with EquatableMixin {
+  const SelectableState._({
     this.includedKeys = const {},
     this.excludedKeys = const {},
     this.includedMap = const {},
@@ -13,10 +13,19 @@ class SelectableState<Key, Value> with EquatableMixin {
     required this.keyReader,
   });
 
+  const SelectableState({
+    required this.keyReader,
+  })  : includedKeys = const {},
+        excludedKeys = const {},
+        excludedMap = const {},
+        includedMap = const {},
+        overrideAll = false,
+        totalCount = 0;
+
   final Set<Key> includedKeys;
   final Set<Key> excludedKeys;
-  final Map<Key, Value> includedMap;
-  final Map<Key, Value> excludedMap;
+  final Map<Key, Value?> includedMap;
+  final Map<Key, Value?> excludedMap;
   final bool overrideAll;
   final int totalCount;
   final Key Function(Value value) keyReader;
@@ -35,15 +44,15 @@ class SelectableState<Key, Value> with EquatableMixin {
   SelectableState<Key, Value> copyWith({
     Set<Key>? includedKeys,
     Set<Key>? excludedKeys,
-    Map<Key, Value>? includedMap,
-    Map<Key, Value>? excludedMap,
+    Map<Key, Value?>? includedMap,
+    Map<Key, Value?>? excludedMap,
     bool? overrideAll,
     int? totalCount,
     Key Function(Value value)? keyReader,
   }) {
     return changesWrapper(
       previous: this,
-      next: SelectableState<Key, Value>(
+      next: SelectableState<Key, Value>._(
         includedKeys: includedKeys ?? this.includedKeys,
         excludedKeys: excludedKeys ?? this.excludedKeys,
         includedMap: includedMap ?? this.includedMap,
@@ -63,9 +72,25 @@ class SelectableState<Key, Value> with EquatableMixin {
     return !isEmpty;
   }
 
-  Iterable<Value> get includedValues => includedMap.values;
+  List<Value> get includedValues {
+    final temp = <Value>[];
+    for (final item in includedMap.values) {
+      if (item != null) {
+        temp.add(item);
+      }
+    }
+    return temp;
+  }
 
-  Iterable<Value> get excludedValues => excludedMap.values;
+  List<Value> get excludedValues {
+    final temp = <Value>[];
+    for (final item in excludedMap.values) {
+      if (item != null) {
+        temp.add(item);
+      }
+    }
+    return temp;
+  }
 
   bool get isSelecting {
     if (overrideAll) {
@@ -106,6 +131,59 @@ class SelectableState<Key, Value> with EquatableMixin {
     return excludedMap[key];
   }
 
+  SelectableState<Key, Value> selectEntries(
+    Iterable<MapEntry<Key, Value?>> entries,
+  ) {
+    if (entries.isEmpty) {
+      return this;
+    } else {
+      var temp = this;
+      for (final entry in entries) {
+        temp = temp.select(entry.key, entry.value);
+      }
+      return temp;
+    }
+  }
+
+  SelectableState<Key, Value> unselectEntries(
+      Iterable<MapEntry<Key, Value?>> entries) {
+    if (entries.isEmpty) {
+      return this;
+    } else {
+      var temp = this;
+      for (final entry in entries) {
+        temp = temp.unselect(entry.key, entry.value);
+      }
+      return temp;
+    }
+  }
+
+  SelectableState<Key, Value> selectValues(Iterable<Value> values) {
+    return selectEntries(
+      values.map(
+        (value) {
+          return MapEntry(
+            keyReader(value),
+            value,
+          );
+        },
+      ),
+    );
+  }
+
+  SelectableState<Key, Value> unselectValues(Iterable<Value> values) {
+    return unselectEntries(
+      values.map(
+        (value) {
+          return MapEntry(
+            keyReader(value),
+            value,
+          );
+        },
+      ),
+    );
+  }
+
   SelectableState<Key, Value> selectAll() {
     return copyWith(
       overrideAll: true,
@@ -141,16 +219,23 @@ class SelectableState<Key, Value> with EquatableMixin {
     }
   }
 
-  SelectableState<Key, Value> toggle(Value value) {
+  SelectableState<Key, Value> toggleValue(Value value) {
     if (isValueSelected(value)) {
-      return unselect(value);
+      return unselectValue(value);
     } else {
-      return select(value);
+      return selectValue(value);
     }
   }
 
-  SelectableState<Key, Value> select(Value value) {
-    final key = keyReader(value);
+  SelectableState<Key, Value> toggle(Key key, [Value? value]) {
+    if (isKeySelected(key)) {
+      return unselect(key, value);
+    } else {
+      return select(key, value);
+    }
+  }
+
+  SelectableState<Key, Value> select(Key key, [Value? value]) {
     final includedKeys = {...this.includedKeys};
     final includedMap = {...this.includedMap};
     final excludedKeys = {...this.excludedKeys};
@@ -174,8 +259,7 @@ class SelectableState<Key, Value> with EquatableMixin {
     );
   }
 
-  SelectableState<Key, Value> unselect(Value value) {
-    final key = keyReader(value);
+  SelectableState<Key, Value> unselect(Key key, [Value? value]) {
     final includedKeys = {...this.includedKeys};
     final excludedKeys = {...this.excludedKeys};
     final includedMap = {...this.includedMap};
@@ -197,6 +281,16 @@ class SelectableState<Key, Value> with EquatableMixin {
       includedKeys: includedKeys,
       includedMap: includedMap,
     );
+  }
+
+  SelectableState<Key, Value> selectValue(Value value) {
+    final key = keyReader(value);
+    return select(key, value);
+  }
+
+  SelectableState<Key, Value> unselectValue(Value value) {
+    final key = keyReader(value);
+    return unselect(key, value);
   }
 
   bool isValueSelected(Value value) {
