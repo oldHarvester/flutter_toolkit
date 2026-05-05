@@ -145,6 +145,29 @@ class SelectableState<Key, Value extends Object> with EquatableMixin {
     }
   }
 
+  SelectableState<Key, Value> selectKeys(Iterable<Key> keys) {
+    return selectEntries(
+      keys.map(
+        (key) {
+          return MapEntry(key, null);
+        },
+      ),
+    );
+  }
+
+  SelectableState<Key, Value> unselectKeys(Iterable<Key> keys) {
+    return unselectEntries(
+      keys.map(
+        (key) {
+          return MapEntry(
+            key,
+            null,
+          );
+        },
+      ),
+    );
+  }
+
   SelectableState<Key, Value> unselectEntries(
       Iterable<MapEntry<Key, Value?>> entries) {
     if (entries.isEmpty) {
