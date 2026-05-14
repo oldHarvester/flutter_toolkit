@@ -1,5 +1,11 @@
 import 'package:flutter_toolkit/flutter_toolkit.dart';
 
+extension NullableObjectExtension<T extends Object?> on T {
+  T? ifChanged(T? obj) {
+    return this != obj ? this : null;
+  }
+}
+
 extension ObjectExtension<Z extends Object> on Z {
   T? castOrNull<T>() {
     if (this is T) {
