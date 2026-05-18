@@ -4,17 +4,17 @@ extension NullableObjectExtension<T extends Object?> on T {
   T? ifChanged(T? obj) {
     return this != obj ? this : null;
   }
-}
 
-extension ObjectExtension<Z extends Object> on Z {
-  T? castOrNull<T>() {
-    if (this is T) {
-      return this as T;
+  Cast? castOrNull<Cast>() {
+    if (this is Cast) {
+      return this as Cast;
     } else {
       return null;
     }
   }
+}
 
+extension ObjectExtension<Z extends Object> on Z {
   OperationResult<Z> safeExecute() {
     final stopWatch = Stopwatch()..start();
     try {
