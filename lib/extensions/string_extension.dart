@@ -84,8 +84,8 @@ extension StringExtension on String {
     return this[0].toUpperCase() + substring(1).toLowerCase();
   }
 
-  String trimTrailingSlash(String raw) {
-    var url = raw.trim();
+  String trimTrailingSlash() {
+    var url = trim();
     while (url.endsWith('/')) {
       url = url.substring(0, url.length - 1).trimRight();
     }
