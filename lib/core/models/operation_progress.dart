@@ -1,3 +1,5 @@
+import 'package:equatable/equatable.dart';
+
 extension OperationProgressExtension<T> on OperationProgress<T> {
   T? get result {
     return when(
@@ -51,7 +53,7 @@ extension OperationProgressExtension<T> on OperationProgress<T> {
   }
 }
 
-sealed class OperationProgress<T> {
+sealed class OperationProgress<T> with EquatableMixin {
   const OperationProgress();
 
   const factory OperationProgress.idle() = OperationProgressIdle;
@@ -113,14 +115,9 @@ sealed class OperationProgress<T> {
 class OperationProgressSuccess<T> extends OperationProgress<T> {
   const OperationProgressSuccess(this.result);
   final T result;
-
+  
   @override
-  int get hashCode => Object.hashAll([result]);
-
-  @override
-  bool operator ==(covariant OperationProgressSuccess<T> other) {
-    return result == other.result;
-  }
+  List<Object?> get props => [result];
 }
 
 class OperationProgressFailed<T> extends OperationProgress<T> {
@@ -131,20 +128,21 @@ class OperationProgressFailed<T> extends OperationProgress<T> {
 
   final Object error;
   final StackTrace stackTrace;
-
+  
   @override
-  int get hashCode => Object.hashAll([error, stackTrace]);
-
-  @override
-  bool operator ==(covariant OperationProgressFailed<T> other) {
-    return error == other.error && stackTrace == other.stackTrace;
-  }
+  List<Object?> get props => [error, stackTrace];
 }
 
 class OperationProgressProcessing<T> extends OperationProgress<T> {
   const OperationProgressProcessing();
+  
+  @override
+  List<Object?> get props => [];
 }
 
 class OperationProgressIdle<T> extends OperationProgress<T> {
   const OperationProgressIdle();
+  
+  @override
+  List<Object?> get props => [];
 }

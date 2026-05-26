@@ -10,13 +10,13 @@ class OperationNotifier<T> extends ExtendedValueNotifier<OperationProgress<T>> {
     required FutureOr<T> Function() operation,
   }) async {
     try {
-      setValue(OperationProgress.processing());
+      setValue(OperationProgress<T>.processing());
       final result = await operation();
-      setValue(OperationProgress.success(result));
+      setValue(OperationProgress<T>.success(result));
       return result;
     } catch (e, stk) {
       setValue(
-        OperationProgress.failed(
+        OperationProgress<T>.failed(
           error: e,
           stackTrace: stk,
         ),
