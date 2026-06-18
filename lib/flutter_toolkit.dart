@@ -75,3 +75,4 @@ export 'package:flutter_toolkit/extensions/uri_extension.dart';
 export 'package:flutter_toolkit/core/models/content_disposition.dart';
 export 'package:flutter_toolkit/core/models/date_period.dart';
 export 'package:flutter_toolkit/core/flexible_value_notifier.dart';
+export 'package:flutter_toolkit/extensions/box_shadow_extension.dart';
