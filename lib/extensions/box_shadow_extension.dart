@@ -1,16 +1,23 @@
 import 'dart:math' as math;
 
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/widgets.dart';
 
-class BoxShadowInsets {
+class BoxShadowInsets with EquatableMixin {
   const BoxShadowInsets({
     required this.left,
     required this.top,
     required this.right,
     required this.bottom,
   });
+
+  const BoxShadowInsets.zero()
+      : left = 0,
+        right = 0,
+        top = 0,
+        bottom = 0;
 
   factory BoxShadowInsets.fromIterable(Iterable<BoxShadow> shadows) {
     double left = 0, top = 0, right = 0, bottom = 0;
@@ -34,6 +41,9 @@ class BoxShadowInsets {
   final double top;
   final double right;
   final double bottom;
+  
+  @override
+  List<Object?> get props => [left, top, right, bottom];
 }
 
 extension BoxShadowListX on Iterable<BoxShadow> {
